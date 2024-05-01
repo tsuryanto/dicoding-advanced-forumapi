@@ -1,8 +1,10 @@
 const Hapi = require('@hapi/hapi');
+const Jwt = require('@hapi/jwt');
 const ClientError = require('../../Commons/exceptions/ClientError');
 const DomainErrorTranslator = require('../../Commons/exceptions/DomainErrorTranslator');
 const users = require('../../Interfaces/http/api/users');
 const authentications = require('../../Interfaces/http/api/authentications');
+const threads = require('../../Interfaces/http/api/threads');
 
 const createServer = async (container) => {
   const server = Hapi.server({
@@ -12,11 +14,51 @@ const createServer = async (container) => {
 
   await server.register([
     {
+      plugin: Jwt,
+    },
+
+  ]);
+
+  server.auth.strategy('forumApiJWT', 'jwt', {
+
+    // merupakan key atau kunci dari token JWT-nya (di mana merupakan access token key)
+    keys: process.env.ACCESS_TOKEN_KEY,
+
+    // merupakan objek yang menentukan seperti apa signature token JWT harus diverifikasi.
+    // nilai false di value dari object verify berarti tidak akan di verifikasi
+    verify: {
+    // nilai audience dari token
+      aud: false,
+      // nilai issuer dari token
+      iss: false,
+      // nilai subject dari token,
+      sub: false,
+      // nilai number yang menentukan umur kedaluwarsa dari token
+      maxAgeSec: process.env.ACCCESS_TOKEN_AGE,
+    },
+
+    // merupakan fungsi yang membawa artifacts token.
+    // Fungsi ini dapat kita manfaatkan untuk menyimpan payload token
+    // yang berarti kredensial pengguna pada request.auth
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: {
+        id: artifacts.decoded.payload.id,
+      },
+    }),
+  });
+
+  await server.register([
+    {
       plugin: users,
       options: { container },
     },
     {
       plugin: authentications,
+      options: { container },
+    },
+    {
+      plugin: threads,
       options: { container },
     },
   ]);
