@@ -1,10 +1,12 @@
 const AddThreadUseCase = require('../../../../Applications/use_case/AddThreadUseCase');
+const AddThreadCommentUseCase = require('../../../../Applications/use_case/AddThreadCommentUseCase');
 
 class ThreadHandler {
   constructor(container) {
     this._container = container;
 
     this.postThreadHandler = this.postThreadHandler.bind(this);
+    this.postThreadCommentHandler = this.postThreadCommentHandler.bind(this);
   }
 
   async postThreadHandler(request, h) {
@@ -23,6 +25,34 @@ class ThreadHandler {
       message: 'Thread berhasil ditambahkan',
       data: {
         addedThread,
+      },
+    });
+    response.code(201);
+    return response;
+  }
+
+  async postThreadCommentHandler(request, h) {
+    const { id: credentialId } = request.auth.credentials;
+    const { threadId } = request.params;
+    const { content } = request.payload;
+
+    const addCommentUseCase = this._container.getInstance(AddThreadCommentUseCase.name);
+    const addedComment = await addCommentUseCase.execute({
+      comment: content,
+      owner: credentialId,
+      threadId,
+    });
+
+    const response = h.response({
+      status: 'success',
+      message: 'Komentar berhasil ditambahkan',
+      data: {
+        addedComment: {
+          id: addedComment.id,
+          content: addedComment.comment,
+          owner: addedComment.owner,
+          date: addedComment.date,
+        },
       },
     });
     response.code(201);

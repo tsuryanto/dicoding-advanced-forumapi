@@ -29,6 +29,7 @@ const RefreshAuthenticationUseCase = require('../Applications/use_case/RefreshAu
 const ThreadRepository = require('../Domains/threads/ThreadRepository');
 const ThreadRepositoryPostgres = require('./repository/ThreadRepositoryPostgres');
 const AddThreadUseCase = require('../Applications/use_case/AddThreadUseCase');
+const AddThreadCommentUseCase = require('../Applications/use_case/AddThreadCommentUseCase');
 
 // creating container
 const container = createContainer();
@@ -175,6 +176,19 @@ container.register([
   {
     key: AddThreadUseCase.name,
     Class: AddThreadUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'threadRepository',
+          internal: ThreadRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: AddThreadCommentUseCase.name,
+    Class: AddThreadCommentUseCase,
     parameter: {
       injectType: 'destructuring',
       dependencies: [

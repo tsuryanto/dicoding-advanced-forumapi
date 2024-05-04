@@ -8,11 +8,7 @@ class ThreadRepository {
     throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async getThreadByOwner(owner) {
-    throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-  }
-
-  async deleteThreadById(threadId) {
+  async addComment(newComment) {
     throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 }

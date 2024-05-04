@@ -7,6 +7,14 @@ const routes = (handler) => ([
       auth: 'forumApiJWT',
     },
   },
+  {
+    method: 'POST',
+    path: '/threads/{threadId}/comments',
+    handler: handler.postThreadCommentHandler,
+    options: {
+      auth: 'forumApiJWT',
+    },
+  },
 ]);
 
 module.exports = routes;
