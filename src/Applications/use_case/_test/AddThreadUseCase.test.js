@@ -37,4 +37,32 @@ describe('AddThreadUseCase', () => {
     // Assert
     expect(thread).toStrictEqual(getThread);
   });
+
+  it('should throw error if payload not contain needed property', async () => {
+    // Arrange
+    const useCasePayload = {
+      owner: 'user-123',
+    };
+    const addThreadUseCase = new AddThreadUseCase({});
+
+    // Action & Assert
+    await expect(addThreadUseCase.execute(useCasePayload))
+      .rejects
+      .toThrowError('ADD_THREAD_USE_CASE.NOT_CONTAIN_NEEDED_PROPERTY');
+  });
+
+  it('should throw error if payload not meet data type specification', async () => {
+    // Arrange
+    const useCasePayload = {
+      owner: 'user-123',
+      title: true,
+      body: 123,
+    };
+    const addThreadUseCase = new AddThreadUseCase({});
+
+    // Action & Assert
+    await expect(addThreadUseCase.execute(useCasePayload))
+      .rejects
+      .toThrowError('ADD_THREAD_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
+  });
 });
