@@ -1,7 +1,7 @@
 class Comment {
   constructor(payload) {
     const {
-      id, threadId, comment, owner, date,
+      id, threadId, comment, owner, date, deletedDate,
     } = payload;
 
     this.id = id;
@@ -9,6 +9,7 @@ class Comment {
     this.comment = comment;
     this.owner = owner;
     this.date = date;
+    this.deletedDate = deletedDate;
   }
 }
 

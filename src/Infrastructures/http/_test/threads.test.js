@@ -7,12 +7,16 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 
 describe('/threads endpoint', () => {
   afterAll(async () => {
+    await UsersTableTestHelper.deleteUserById('user-apitest123');
     await pool.end();
   });
 
   afterEach(async () => {
     await ThreadsTableTestHelper.cleanTable();
-    await UsersTableTestHelper.cleanTable();
+  });
+
+  beforeAll(async () => {
+    await UsersTableTestHelper.addUser({ id: 'user-apitest123' });
   });
 
   describe('when POST /threads', () => {
@@ -23,7 +27,7 @@ describe('/threads endpoint', () => {
         body: 'secret',
       };
       const server = await createServer(container);
-      const token = await Jwt.token.generate({ id: 'user-123', username: 'dicoding' }, process.env.ACCESS_TOKEN_KEY);
+      const token = await Jwt.token.generate({ id: 'user-apitest123', username: 'dicoding' }, process.env.ACCESS_TOKEN_KEY);
 
       // Action
       const response = await server.inject({
@@ -48,7 +52,7 @@ describe('/threads endpoint', () => {
         body: 'secret',
       };
       const server = await createServer(container);
-      const token = await Jwt.token.generate({ id: 'user-123', username: 'dicoding' }, process.env.ACCESS_TOKEN_KEY);
+      const token = await Jwt.token.generate({ id: 'user-apitest123', username: 'dicoding' }, process.env.ACCESS_TOKEN_KEY);
 
       // Action
       const response = await server.inject({
@@ -92,7 +96,7 @@ describe('/threads endpoint', () => {
   describe('when POST /threads/{threadId}/comments', () => {
     it('should response 201 and persisted thread', async () => {
       await ThreadsTableTestHelper.addThread({
-        id: 'thread-123', title: 'dicoding', body: 'secret', owner: 'user-123',
+        id: 'thread-apitest123', title: 'dicoding', body: 'secret', owner: 'user-apitest123',
       });
 
       // Arrange
@@ -100,12 +104,12 @@ describe('/threads endpoint', () => {
         content: 'dicoding content',
       };
       const server = await createServer(container);
-      const token = Jwt.token.generate({ id: 'user-123', username: 'dicoding' }, process.env.ACCESS_TOKEN_KEY);
+      const token = Jwt.token.generate({ id: 'user-apitest123', username: 'dicoding' }, process.env.ACCESS_TOKEN_KEY);
 
       // Action
       const response = await server.inject({
         method: 'POST',
-        url: '/threads/thread-123/comments',
+        url: '/threads/thread-apitest123/comments',
         payload: requestPayload,
         headers: {
           Authorization: `Bearer ${token}`,
@@ -123,7 +127,7 @@ describe('/threads endpoint', () => {
       // Arrange
       const requestPayload = {};
       const server = await createServer(container);
-      const token = Jwt.token.generate({ id: 'user-123', username: 'dicoding' }, process.env.ACCESS_TOKEN_KEY);
+      const token = Jwt.token.generate({ id: 'user-apitest123', username: 'dicoding' }, process.env.ACCESS_TOKEN_KEY);
 
       // Action
       const response = await server.inject({
@@ -154,6 +158,54 @@ describe('/threads endpoint', () => {
         method: 'POST',
         url: '/threads/{threadId}/comments',
         payload: requestPayload,
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(401);
+      expect(responseJson.status).toBeUndefined();
+      expect(responseJson.message).toEqual('Missing authentication');
+    });
+  });
+
+  describe('when DELETE /threads/{threadId}/comments/{commentId}', () => {
+    it('should response 200 and delete comment', async () => {
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-commentdelete-apitest123',
+        owner: 'user-apitest123',
+      });
+
+      await ThreadsTableTestHelper.addComment({
+        id: 'comment-apitest123', threadId: 'thread-commentdelete-apitest123', content: 'dicoding content', owner: 'user-apitest123',
+      });
+
+      // Arrange
+      const server = await createServer(container);
+      const token = Jwt.token.generate({ id: 'user-apitest123', username: 'dicoding' }, process.env.ACCESS_TOKEN_KEY);
+
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: '/threads/thread-commentdelete-apitest123/comments/comment-apitest123',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+    });
+
+    it('should response 401 when authentication not found', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: '/threads/thread-commentdelete-apitest123/comments/comment-apitest123',
       });
 
       // Assert

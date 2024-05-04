@@ -1,17 +1,12 @@
 /* istanbul ignore file */
 const pool = require('../src/Infrastructures/database/postgres/pool');
-const userTableHelper = require('./UsersTableTestHelper');
 
 const ThreadsTableTestHelper = {
   async addThread({
     id = 'thread-123', title = 'dicoding thread title', body = 'dicoding thread body', owner = 'user-123', date = new Date().toISOString(),
   }) {
-    await userTableHelper.addUser({
-      id: owner,
-    });
-
     const query = {
-      text: 'INSERT INTO threads VALUES($1, $2, $3, $4, $5) RETURNING id, title, body, owner, date',
+      text: 'INSERT INTO threads (id, title, body, owner, date) VALUES($1, $2, $3, $4, $5) RETURNING id, title, body, owner, date',
       values: [id, title, body, owner, date],
     };
 
@@ -26,6 +21,17 @@ const ThreadsTableTestHelper = {
 
     const result = await pool.query(query);
     return result.rows;
+  },
+
+  async addComment({
+    id = 'comment-123', comment = 'dicoding comment', owner = 'user-123', threadId = 'thread-123', date = new Date().toISOString(),
+  }) {
+    const query = {
+      text: 'INSERT INTO threadcomments (id, "threadId", comment, owner, date) VALUES($1, $2, $3, $4, $5) RETURNING id, comment, owner, "threadId", date',
+      values: [id, threadId, comment, owner, date],
+    };
+
+    await pool.query(query);
   },
 
   async findCommentsById(id) {

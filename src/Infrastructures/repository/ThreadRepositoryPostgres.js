@@ -16,7 +16,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     const id = `thread-${this._idGenerator()}`;
 
     const query = {
-      text: 'INSERT INTO threads VALUES($1, $2, $3, $4, $5) RETURNING id, title, body, owner, date',
+      text: 'INSERT INTO threads (id, title, body, owner, date) VALUES($1, $2, $3, $4, $5) RETURNING id, title, body, owner, date',
       values: [id, title, body, owner, date],
     };
 
@@ -46,13 +46,51 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     const id = `threadComment-${this._idGenerator()}`;
 
     const query = {
-      text: 'INSERT INTO threadcomments VALUES($1, $2, $3, $4, $5) RETURNING id, "threadId", comment, owner, date',
+      text: 'INSERT INTO threadcomments (id, "threadId", comment, owner, date) VALUES($1, $2, $3, $4, $5) RETURNING id, "threadId", comment, owner, date',
       values: [id, threadId, comment, owner, date],
     };
 
     const result = await this._pool.query(query);
 
     return new Comment({ ...result.rows[0] });
+  }
+
+  // async getCommentByThreadId(threadId) {
+  //   const query = {
+  //     text: 'SELECT * FROM threadcomments WHERE "threadId" = $1',
+  //     values: [threadId],
+  //   };
+
+  //   const result = await this._pool.query(query);
+  //   return result.rows.map((comment) => new Comment({ ...comment }));
+  // }
+
+  async getCommentById(commentId) {
+    const query = {
+      text: 'SELECT * FROM threadcomments WHERE id = $1',
+      values: [commentId],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      return null;
+    }
+
+    return new Comment({ ...result.rows[0] });
+  }
+
+  async deleteCommentById(commentId, date) {
+    const query = {
+      text: 'UPDATE threadcomments SET "deletedDate" = $2 WHERE id = $1',
+      values: [commentId, date],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      return false;
+    }
+
+    return true;
   }
 }
 
