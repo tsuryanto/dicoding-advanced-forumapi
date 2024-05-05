@@ -39,6 +39,20 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     return new Thread({ ...result.rows[0] });
   }
 
+  async verifyThreadAvailability(threadId) {
+    const query = {
+      text: 'SELECT id FROM threads WHERE id = $1',
+      values: [threadId],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      return false;
+    }
+
+    return true;
+  }
+
   async addComment(addComment) {
     const {
       threadId, comment, owner, date,
@@ -77,6 +91,34 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     }
 
     return new Comment({ ...result.rows[0] });
+  }
+
+  async verifyCommentAvailability(commentId) {
+    const query = {
+      text: 'SELECT id FROM threadcomments WHERE id = $1',
+      values: [commentId],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      return false;
+    }
+
+    return true;
+  }
+
+  async verifyCommentOwnership(commentId, owner) {
+    const query = {
+      text: 'SELECT id FROM threadcomments WHERE id = $1 AND owner = $2',
+      values: [commentId, owner],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      return false;
+    }
+
+    return true;
   }
 
   async deleteCommentById(commentId, date) {

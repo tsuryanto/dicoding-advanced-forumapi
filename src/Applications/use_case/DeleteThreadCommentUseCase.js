@@ -8,22 +8,19 @@ class DeleteThreadCommentUseCase {
     const { threadId, commentId, owner } = useCasePayload;
     const date = new Date().toISOString();
 
-    const thread = await this._threadRepository.getThreadById(threadId);
-    if (!thread) {
+    const isThreadExist = await this._threadRepository.verifyThreadAvailability(threadId);
+    if (!isThreadExist) {
       throw new Error('DELETE_COMMENT_USE_CASE.THREAD_NOT_FOUND');
     }
 
-    const comment = await this._threadRepository.getCommentById(commentId);
-    if (!comment) {
+    const isCommentExist = await this._threadRepository.verifyCommentAvailability(commentId);
+    if (!isCommentExist) {
       throw new Error('DELETE_COMMENT_USE_CASE.COMMENT_NOT_FOUND');
     }
 
-    if (comment.owner !== owner) {
+    const isAllowed = await this._threadRepository.verifyCommentOwnership(commentId, owner);
+    if (!isAllowed) {
       throw new Error('DELETE_COMMENT_USE_CASE.NOT_THE_COMMENT_OWNER');
-    }
-
-    if (comment.deletedDate) {
-      throw new Error('DELETE_COMMENT_USE_CASE.COMMENT_ALREADY_DELETED');
     }
 
     const isDeleted = await this._threadRepository.deleteCommentById(commentId, date);

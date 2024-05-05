@@ -1,5 +1,7 @@
 const GetThreadUseCase = require('../GetThreadUseCase');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
+const Comment = require('../../../Domains/threads/entities/Comment');
+const Thread = require('../../../Domains/threads/entities/Thread');
 
 describe('GetThreadUseCase', () => {
   it('should orchestrating the get thread action correctly', async () => {
@@ -29,28 +31,30 @@ describe('GetThreadUseCase', () => {
 
     // mock
     const mockThreadRepository = new ThreadRepository();
-    mockThreadRepository.getThreadById = jest.fn(() => Promise.resolve({
-      id: 'thread-123',
-      title: 'Hello, Dicoding',
-      body: 'Any want to discuss ?',
-      date: '2024-04-24T19:23:55.913Z',
-      username: 'dicoding',
-    }));
+    mockThreadRepository.getThreadById = jest.fn(() => Promise.resolve(
+      new Thread({
+        id: 'thread-123',
+        title: 'Hello, Dicoding',
+        body: 'Any want to discuss ?',
+        date: '2024-04-24T19:23:55.913Z',
+        username: 'dicoding',
+      }),
+    ));
     mockThreadRepository.getCommentByThreadId = jest.fn(() => Promise.resolve([
-      {
+      new Comment({
         id: 'comment-456',
         username: 'john',
         date: '2024-04-20T19:23:55.913Z',
         comment: 'ini comment',
         deletedDate: '2024-04-21T19:23:55.913Z',
-      },
-      {
+      }),
+      new Comment({
         id: 'comment-123',
         username: 'dicoding',
         date: '2024-04-24T19:23:55.913Z',
         comment: 'ini comment',
         deletedDate: null,
-      },
+      }),
     ]));
 
     // Action
@@ -59,6 +63,8 @@ describe('GetThreadUseCase', () => {
     });
     const thread = await getThreadUseCase.execute(useCasePayload);
     expect(thread).toStrictEqual(expectedUseCase);
+    expect(mockThreadRepository.getThreadById).toBeCalledWith(useCasePayload);
+    expect(mockThreadRepository.getCommentByThreadId).toBeCalledWith(useCasePayload);
   });
 
   it('should throw error if thread not found', async () => {
@@ -79,5 +85,7 @@ describe('GetThreadUseCase', () => {
     await expect(getThreadUseCase.execute(useCasePayload))
       .rejects
       .toThrowError('GET_THREAD_USE_CASE.NOT_FOUND');
+    expect(mockThreadRepository.getThreadById).toBeCalledWith(useCasePayload);
+    expect(mockThreadRepository.getCommentByThreadId).toBeCalledWith(useCasePayload);
   });
 });

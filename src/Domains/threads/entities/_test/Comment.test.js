@@ -10,10 +10,11 @@ describe('a Comment entities', () => {
       owner: 'user-123',
       date: new Date().toISOString(),
       username: 'dicoding',
+      deletedDate: null,
     };
     // Action
     const {
-      id, threadId, comment, owner, date, username,
+      id, threadId, comment, owner, date, deletedDate, username,
     } = new Comment(payload);
     // Assert
     expect(id).toEqual(payload.id);
@@ -21,6 +22,7 @@ describe('a Comment entities', () => {
     expect(comment).toEqual(payload.comment);
     expect(owner).toEqual(payload.owner);
     expect(date).toEqual(payload.date);
+    expect(deletedDate).toEqual(payload.deletedDate);
     expect(username).toEqual(payload.username);
   });
 });

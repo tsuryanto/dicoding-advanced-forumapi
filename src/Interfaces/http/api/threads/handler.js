@@ -51,12 +51,7 @@ class ThreadHandler {
       status: 'success',
       message: 'Komentar berhasil ditambahkan',
       data: {
-        addedComment: {
-          id: addedComment.id,
-          content: addedComment.comment,
-          owner: addedComment.owner,
-          date: addedComment.date,
-        },
+        addedComment,
       },
     });
     response.code(201);

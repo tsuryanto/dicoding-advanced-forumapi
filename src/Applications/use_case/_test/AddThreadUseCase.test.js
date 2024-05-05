@@ -36,6 +36,7 @@ describe('AddThreadUseCase', () => {
 
     // Assert
     expect(thread).toStrictEqual(getThread);
+    expect(mockThreadRepository.addThread).toHaveBeenCalledWith(getThread);
   });
 
   it('should throw error if payload not contain needed property', async () => {

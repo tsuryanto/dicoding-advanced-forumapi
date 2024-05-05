@@ -8,6 +8,10 @@ class ThreadRepository {
     throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
+  async verifyThreadAvailability(threadId) {
+    throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
+
   async addComment(newComment) {
     throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
@@ -17,6 +21,14 @@ class ThreadRepository {
   }
 
   async getCommentById(commentId) {
+    throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
+
+  async verifyCommentAvailability(commentId) {
+    throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
+
+  async verifyCommentOwnership(commentId, owner) {
     throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 

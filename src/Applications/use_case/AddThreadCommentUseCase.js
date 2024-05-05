@@ -17,12 +17,18 @@ class AddThreadCommentUseCase {
       comment, owner, threadId, date,
     });
 
-    const thread = await this._threadRepository.getThreadById(threadId);
-    if (!thread) {
+    const isExist = await this._threadRepository.verifyThreadAvailability(threadId);
+    if (!isExist) {
       throw new Error('ADD_COMMENT_USE_CASE.THREAD_NOT_FOUND');
     }
 
-    return this._threadRepository.addComment(addComment);
+    const addedComment = await this._threadRepository.addComment(addComment);
+    return {
+      id: addedComment.id,
+      content: addedComment.comment,
+      owner: addedComment.owner,
+      date: addedComment.date,
+    };
   }
 
   _verifyPayload(payload) {

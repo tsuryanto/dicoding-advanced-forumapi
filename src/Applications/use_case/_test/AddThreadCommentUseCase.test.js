@@ -20,8 +20,8 @@ describe('AddThreadCommentUseCase', () => {
       threadId: useCasePayload.threadId,
       date,
     });
+    mockThreadRepository.verifyThreadAvailability = jest.fn(() => true);
     mockThreadRepository.addComment = jest.fn(() => Promise.resolve(getComment));
-    mockThreadRepository.getThreadById = jest.fn(() => Promise.resolve(true));
 
     const dateNowSpy = jest.spyOn(Date.prototype, 'toISOString');
     dateNowSpy.mockImplementationOnce(() => date);
@@ -36,8 +36,20 @@ describe('AddThreadCommentUseCase', () => {
     dateNowSpy.mockRestore();
 
     // Assert
-    expect();
-    expect(comment).toStrictEqual(getComment);
+    expect(mockThreadRepository.verifyThreadAvailability)
+      .toHaveBeenCalledWith(useCasePayload.threadId);
+    expect(mockThreadRepository.addComment)
+      .toHaveBeenCalledWith(new AddComment({
+        comment: useCasePayload.comment,
+        owner: useCasePayload.owner,
+        threadId: useCasePayload.threadId,
+        date,
+      }));
+
+    expect(comment.owner).toStrictEqual(getComment.owner);
+    expect(comment.content).toStrictEqual(getComment.comment);
+    expect(comment.owner).toStrictEqual(getComment.owner);
+    expect(comment.date).toStrictEqual(getComment.date);
   });
 
   it('should throw error if payload not contain needed property', async () => {
@@ -70,14 +82,8 @@ describe('AddThreadCommentUseCase', () => {
 
   it('should throw error if thread not found', async () => {
     // mock
-    const date = '2021-08-08T07:22:13.017Z';
-
     const mockThreadRepository = new ThreadRepository();
-    mockThreadRepository.getThreadById = jest.fn(() => Promise.resolve(false));
-    mockThreadRepository.addComment = jest.fn(() => Promise.resolve());
-
-    const dateNowSpy = jest.spyOn(Date.prototype, 'toISOString');
-    dateNowSpy.mockImplementationOnce(() => date);
+    mockThreadRepository.verifyThreadAvailability = jest.fn(() => false);
 
     // Arrange
     const useCasePayload = {
@@ -89,12 +95,12 @@ describe('AddThreadCommentUseCase', () => {
       threadRepository: mockThreadRepository,
     });
 
-    // reset mock
-    dateNowSpy.mockRestore();
-
     // Action & Assert
+
     await expect(addThreadCommentUseCase.execute(useCasePayload))
       .rejects
       .toThrowError('ADD_COMMENT_USE_CASE.THREAD_NOT_FOUND');
+    expect(mockThreadRepository.verifyThreadAvailability)
+      .toHaveBeenCalledWith(useCasePayload.threadId);
   });
 });

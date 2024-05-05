@@ -214,6 +214,41 @@ describe('/threads endpoint', () => {
       expect(responseJson.status).toBeUndefined();
       expect(responseJson.message).toEqual('Missing authentication');
     });
+
+    it('should response 403 when unauthorized comment owner', async () => {
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-commentdelete-apitest123',
+        title: 'dicoding',
+        body: 'secret',
+        owner: 'user-apitest123',
+      });
+
+      await ThreadsTableTestHelper.addComment({
+        id: 'comment-apitest123',
+        threadId: 'thread-commentdelete-apitest123',
+        content: 'dicoding content',
+        owner: 'user-apitest124',
+      });
+
+      // Arrange
+      const server = await createServer(container);
+      const token = Jwt.token.generate({ id: 'xxx', username: 'xxx' }, process.env.ACCESS_TOKEN_KEY);
+
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: '/threads/thread-commentdelete-apitest123/comments/comment-apitest123',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(403);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('Anda tidak berhak mengakses resource ini');
+    });
   });
 
   describe('when GET /threads/{threadId}', () => {

@@ -2,6 +2,8 @@ const ThreadRepositoryPostgres = require('../ThreadRepositoryPostgres');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const pool = require('../../database/postgres/pool');
+const AddThread = require('../../../Domains/threads/entities/AddThread');
+const AddComment = require('../../../Domains/threads/entities/AddComment');
 
 describe('ThreadRepositoryPostgres', () => {
   afterEach(async () => {
@@ -25,12 +27,12 @@ describe('ThreadRepositoryPostgres', () => {
       const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
 
       // Action
-      const payload = {
+      const payload = new AddThread({
         title: 'dicoding',
         body: 'body dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
-      };
+      });
       const addedThread = await threadRepository.addThread(payload);
 
       expect(addedThread.id).toEqual('thread-456');
@@ -52,12 +54,12 @@ describe('ThreadRepositoryPostgres', () => {
       const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
 
       // pre
-      const payload = {
+      const payload = new AddThread({
         title: 'dicoding',
         body: 'body dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
-      };
+      });
       await threadRepository.addThread(payload);
 
       // Action
@@ -82,6 +84,36 @@ describe('ThreadRepositoryPostgres', () => {
     });
   });
 
+  describe('verifyThreadAvailability function', () => {
+    it('should return true if thread exists', async () => {
+      const fakeIdGenerator = () => '123';
+
+      // Arrange
+      const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+      // pre
+      await threadRepository.addThread(new AddThread({
+        title: 'dicoding',
+        body: 'body dicoding',
+        owner: 'user-threadtest-123',
+        date: '2024-08-08T07:22:58.000Z',
+      }));
+
+      // Action
+      const available = await threadRepository.verifyThreadAvailability('thread-123');
+      expect(available).toEqual(true);
+    });
+
+    it('should return false if thread not exists', async () => {
+      // Arrange
+      const threadRepository = new ThreadRepositoryPostgres(pool, {});
+
+      // Action
+      const available = await threadRepository.verifyThreadAvailability('thread-123');
+      expect(available).toEqual(false);
+    });
+  });
+
   describe('addComment function', () => {
     it('should persist new comment and return correct data', async () => {
       const fakeIdGenerator = () => '123';
@@ -90,20 +122,20 @@ describe('ThreadRepositoryPostgres', () => {
       const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
 
       // pre
-      await threadRepository.addThread({
+      await threadRepository.addThread(new AddThread({
         title: 'dicoding',
         body: 'body dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
-      });
+      }));
 
       // Action
-      const payload = {
+      const payload = new AddComment({
         threadId: 'thread-123',
         comment: 'comment dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
-      };
+      });
       const addedComment = await threadRepository.addComment(payload);
       expect(addedComment.id).toEqual('threadComment-123');
       expect(addedComment.threadId).toEqual(payload.threadId);
@@ -124,19 +156,19 @@ describe('ThreadRepositoryPostgres', () => {
       const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
 
       // pre
-      await threadRepository.addThread({
+      await threadRepository.addThread(new AddThread({
         title: 'dicoding',
         body: 'body dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
-      });
+      }));
 
-      const payload = {
+      const payload = new AddComment({
         threadId: 'thread-123',
         comment: 'comment dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
-      };
+      });
       await threadRepository.addComment(payload);
 
       // Action
@@ -160,6 +192,100 @@ describe('ThreadRepositoryPostgres', () => {
     });
   });
 
+  describe('verifyThreadCommentAvailability function', () => {
+    it('should return true if comment exists', async () => {
+      const fakeIdGenerator = () => '123';
+
+      // Arrange
+      const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+      // pre
+      await threadRepository.addThread(new AddThread({
+        title: 'dicoding',
+        body: 'body dicoding',
+        owner: 'user-threadtest-123',
+        date: '2024-08-08T07:22:58.000Z',
+      }));
+
+      await threadRepository.addComment(new AddComment({
+        id: '123',
+        threadId: 'thread-123',
+        comment: 'comment dicoding',
+        owner: 'user-threadtest-123',
+        date: '2024-08-08T07:22:58.000Z',
+      }));
+
+      // Action
+      const available = await threadRepository.verifyCommentAvailability('threadComment-123');
+      expect(available).toEqual(true);
+    });
+
+    it('should return false if comment not exists', async () => {
+      // Arrange
+      const threadRepository = new ThreadRepositoryPostgres(pool, {});
+
+      // Action
+      const available = await threadRepository.verifyCommentAvailability('threadComment-123');
+      expect(available).toEqual(false);
+    });
+  });
+
+  describe('verifyCommentOwnership function', () => {
+    it('should return true if user has comment ownership', async () => {
+      const fakeIdGenerator = () => '123';
+
+      // Arrange
+      const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+      // pre
+      await threadRepository.addThread(new AddThread({
+        title: 'dicoding',
+        body: 'body dicoding',
+        owner: 'user-threadtest-123',
+        date: '2024-08-08T07:22:58.000Z',
+      }));
+
+      await threadRepository.addComment(new AddComment({
+        id: '123',
+        threadId: 'thread-123',
+        comment: 'comment dicoding',
+        owner: 'user-threadtest-123',
+        date: '2024-08-08T07:22:58.000Z',
+      }));
+
+      // Action
+      const ownership = await threadRepository.verifyCommentOwnership('threadComment-123', 'user-threadtest-123');
+      expect(ownership).toEqual(true);
+    });
+
+    it('should return false if user has no comment ownership', async () => {
+      const fakeIdGenerator = () => '123';
+
+      // Arrange
+      const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+      // pre
+      await threadRepository.addThread(new AddThread({
+        title: 'dicoding',
+        body: 'body dicoding',
+        owner: 'user-threadtest-123',
+        date: '2024-08-08T07:22:58.000Z',
+      }));
+
+      await threadRepository.addComment(new AddComment({
+        id: '123',
+        threadId: 'thread-123',
+        comment: 'comment dicoding',
+        owner: 'user-threadtest-123',
+        date: '2024-08-08T07:22:58.000Z',
+      }));
+
+      // Action
+      const ownership = await threadRepository.verifyCommentOwnership('threadComment-123', 'user-threadtest-456');
+      expect(ownership).toEqual(false);
+    });
+  });
+
   describe('deleteCommentById function', () => {
     it('should delete comment correctly', async () => {
       const fakeIdGenerator = () => '123';
@@ -168,21 +294,20 @@ describe('ThreadRepositoryPostgres', () => {
       const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
 
       // pre
-      await threadRepository.addThread({
+      await threadRepository.addThread(new AddThread({
         title: 'dicoding',
         body: 'body dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
-      });
+      }));
 
-      const payload = {
+      await threadRepository.addComment(new AddComment({
         id: '123',
         threadId: 'thread-123',
         comment: 'comment dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
-      };
-      await threadRepository.addComment(payload);
+      }));
 
       // Action
       const deleted = await threadRepository.deleteCommentById('threadComment-123', '2024-08-08T07:22:58.000Z');
@@ -211,19 +336,19 @@ describe('ThreadRepositoryPostgres', () => {
       const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
 
       // pre
-      await threadRepository.addThread({
+      await threadRepository.addThread(new AddThread({
         title: 'dicoding',
         body: 'body dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
-      });
+      }));
 
-      const payload = {
+      const payload = new AddComment({
         threadId: 'thread-123',
         comment: 'comment dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
-      };
+      });
       await threadRepository.addComment(payload);
 
       // Action
