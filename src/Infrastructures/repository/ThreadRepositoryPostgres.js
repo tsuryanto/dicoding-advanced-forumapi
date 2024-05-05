@@ -27,7 +27,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
 
   async getThreadById(threadId) {
     const query = {
-      text: 'SELECT * FROM threads WHERE id = $1',
+      text: 'SELECT threads.*, users.username FROM threads JOIN users ON users.id = threads.owner WHERE threads.id = $1',
       values: [threadId],
     };
 
@@ -55,15 +55,15 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     return new Comment({ ...result.rows[0] });
   }
 
-  // async getCommentByThreadId(threadId) {
-  //   const query = {
-  //     text: 'SELECT * FROM threadcomments WHERE "threadId" = $1',
-  //     values: [threadId],
-  //   };
+  async getCommentByThreadId(threadId) {
+    const query = {
+      text: 'SELECT threadcomments.*, users.username FROM threadcomments JOIN users on users.id = threadcomments.owner WHERE threadcomments."threadId" = $1 ORDER BY threadcomments.date ASC',
+      values: [threadId],
+    };
 
-  //   const result = await this._pool.query(query);
-  //   return result.rows.map((comment) => new Comment({ ...comment }));
-  // }
+    const result = await this._pool.query(query);
+    return result.rows.map((comment) => new Comment({ ...comment }));
+  }
 
   async getCommentById(commentId) {
     const query = {

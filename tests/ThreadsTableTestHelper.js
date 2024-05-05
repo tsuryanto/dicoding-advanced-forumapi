@@ -44,6 +44,15 @@ const ThreadsTableTestHelper = {
     return result.rows;
   },
 
+  async deleteCommentById(id, date = new Date().toISOString()) {
+    const query = {
+      text: 'UPDATE threadcomments SET "deletedDate" = $2 WHERE id = $1',
+      values: [id, date],
+    };
+
+    await pool.query(query);
+  },
+
   async cleanTable() {
     await pool.query('DELETE FROM threads WHERE 1=1');
     await pool.query('DELETE FROM threadcomments WHERE 1=1');

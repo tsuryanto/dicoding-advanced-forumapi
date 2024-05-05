@@ -68,6 +68,7 @@ describe('ThreadRepositoryPostgres', () => {
       expect(thread.owner).toEqual(payload.owner);
       expect(thread.body).toEqual(payload.body);
       expect(thread.date).toEqual(payload.date);
+      expect(thread.username).toEqual('dicoding');
     });
 
     it('should return null when thread not found', async () => {
@@ -200,6 +201,39 @@ describe('ThreadRepositoryPostgres', () => {
       // Action
       const deleted = await threadRepository.deleteCommentById('threadComment-123', '2024-08-08T07:22:58.000Z');
       expect(deleted).toEqual(false);
+    });
+  });
+
+  describe('getCommentByThreadId function', () => {
+    it('should return comments correctly', async () => {
+      const fakeIdGenerator = () => '123';
+
+      const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+      // pre
+      await threadRepository.addThread({
+        title: 'dicoding',
+        body: 'body dicoding',
+        owner: 'user-threadtest-123',
+        date: '2024-08-08T07:22:58.000Z',
+      });
+
+      const payload = {
+        threadId: 'thread-123',
+        comment: 'comment dicoding',
+        owner: 'user-threadtest-123',
+        date: '2024-08-08T07:22:58.000Z',
+      };
+      await threadRepository.addComment(payload);
+
+      // Action
+      const comments = await threadRepository.getCommentByThreadId('thread-123');
+      expect(comments).toHaveLength(1);
+      expect(comments[0].id).toEqual('threadComment-123');
+      expect(comments[0].threadId).toEqual(payload.threadId);
+      expect(comments[0].owner).toEqual(payload.owner);
+      expect(comments[0].comment).toEqual(payload.comment);
+      expect(comments[0].date).toEqual(payload.date);
     });
   });
 });

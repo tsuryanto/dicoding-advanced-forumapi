@@ -9,10 +9,11 @@ describe('a Thread entities', () => {
       body: 'thread body',
       owner: 'user-123',
       date: new Date().toISOString(),
+      username: 'dicoding',
     };
     // Action
     const {
-      id, title, body, owner, date,
+      id, title, body, owner, date, username,
     } = new Thread(payload);
     // Assert
     expect(id).toEqual(payload.id);
@@ -20,5 +21,6 @@ describe('a Thread entities', () => {
     expect(body).toEqual(payload.body);
     expect(owner).toEqual(payload.owner);
     expect(date).toEqual(payload.date);
+    expect(username).toEqual(payload.username);
   });
 });

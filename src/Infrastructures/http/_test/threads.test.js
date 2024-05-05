@@ -215,4 +215,75 @@ describe('/threads endpoint', () => {
       expect(responseJson.message).toEqual('Missing authentication');
     });
   });
+
+  describe('when GET /threads/{threadId}', () => {
+    it('should response 200 and return thread', async () => {
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-get-apitest123',
+        title: 'dicoding',
+        body: 'secret',
+        owner: 'user-apitest123',
+      });
+      await ThreadsTableTestHelper.addComment({
+        id: 'comment-apitest123',
+        threadId: 'thread-get-apitest123',
+        content: 'dicoding content',
+        owner: 'user-apitest123',
+      });
+      await ThreadsTableTestHelper.addComment({
+        id: 'comment-apitest124',
+        threadId: 'thread-get-apitest123',
+        content: 'dicoding content',
+        owner: 'user-apitest123',
+      });
+      await ThreadsTableTestHelper.deleteCommentById('comment-apitest124');
+
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/thread-get-apitest123',
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data.thread).toBeDefined();
+
+      expect(responseJson.data.thread.id).toEqual('thread-get-apitest123');
+      expect(responseJson.data.thread.title).toEqual('dicoding');
+      expect(responseJson.data.thread.body).toEqual('secret');
+      expect(responseJson.data.thread.username).toEqual('dicoding');
+
+      expect(responseJson.data.thread.comments).toHaveLength(2);
+
+      expect(responseJson.data.thread.comments[0].id).toEqual('comment-apitest123');
+      expect(responseJson.data.thread.comments[0].content).toEqual('dicoding comment');
+      expect(responseJson.data.thread.comments[0].username).toEqual('dicoding');
+
+      expect(responseJson.data.thread.comments[1].id).toEqual('comment-apitest124');
+      expect(responseJson.data.thread.comments[1].content).toEqual('***komentar telah dihapus***');
+      expect(responseJson.data.thread.comments[1].username).toEqual('dicoding');
+    });
+
+    it('should response 404 when thread not found', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/thread-get-apitest123',
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('thread tidak ditemukan');
+    });
+  });
 });

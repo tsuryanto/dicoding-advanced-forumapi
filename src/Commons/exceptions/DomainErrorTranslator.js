@@ -33,6 +33,7 @@ DomainErrorTranslator._directories = {
   'DELETE_COMMENT_USE_CASE.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat menghapus komentar karena tipe data tidak sesuai'),
   'DELETE_COMMENT_USE_CASE.NOT_THE_COMMENT_OWNER': new AuthorizationError('tidak dapat menghapus komentar karena Anda bukan pemilik komentar'),
   'DELETE_COMMENT_USE_CASE.COMMENT_ALREADY_DELETED': new InvariantError('tidak dapat menghapus komentar karena komentar sudah terhapus'),
+  'GET_THREAD_USE_CASE.NOT_FOUND': new NotFoundError('thread tidak ditemukan'),
 };
 
 module.exports = DomainErrorTranslator;
