@@ -21,7 +21,7 @@ class GetThreadUseCase {
         id: comment.id,
         username: comment.username,
         date: comment.date,
-        content: ((comment.deletedDate === null) ? comment.comment : '***komentar telah dihapus***'),
+        content: ((comment.deletedDate === null) ? comment.comment : '**komentar telah dihapus**'),
       })),
     };
   }

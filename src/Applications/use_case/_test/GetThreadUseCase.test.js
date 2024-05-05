@@ -16,7 +16,7 @@ describe('GetThreadUseCase', () => {
           id: 'comment-456',
           username: 'john',
           date: '2024-04-20T19:23:55.913Z',
-          content: '***komentar telah dihapus***',
+          content: '**komentar telah dihapus**',
         },
         {
           id: 'comment-123',

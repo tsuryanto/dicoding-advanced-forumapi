@@ -265,7 +265,7 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.comments[0].username).toEqual('dicoding');
 
       expect(responseJson.data.thread.comments[1].id).toEqual('comment-apitest124');
-      expect(responseJson.data.thread.comments[1].content).toEqual('***komentar telah dihapus***');
+      expect(responseJson.data.thread.comments[1].content).toEqual('**komentar telah dihapus**');
       expect(responseJson.data.thread.comments[1].username).toEqual('dicoding');
     });
 
