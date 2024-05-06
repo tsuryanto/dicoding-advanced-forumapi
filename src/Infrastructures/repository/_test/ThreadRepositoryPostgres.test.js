@@ -208,7 +208,6 @@ describe('ThreadRepositoryPostgres', () => {
       }));
 
       await threadRepository.addComment(new AddComment({
-        id: '123',
         threadId: 'thread-123',
         comment: 'comment dicoding',
         owner: 'user-threadtest-123',
@@ -246,7 +245,6 @@ describe('ThreadRepositoryPostgres', () => {
       }));
 
       await threadRepository.addComment(new AddComment({
-        id: '123',
         threadId: 'thread-123',
         comment: 'comment dicoding',
         owner: 'user-threadtest-123',
@@ -273,7 +271,6 @@ describe('ThreadRepositoryPostgres', () => {
       }));
 
       await threadRepository.addComment(new AddComment({
-        id: '123',
         threadId: 'thread-123',
         comment: 'comment dicoding',
         owner: 'user-threadtest-123',
@@ -302,7 +299,6 @@ describe('ThreadRepositoryPostgres', () => {
       }));
 
       await threadRepository.addComment(new AddComment({
-        id: '123',
         threadId: 'thread-123',
         comment: 'comment dicoding',
         owner: 'user-threadtest-123',

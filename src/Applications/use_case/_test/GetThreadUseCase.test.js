@@ -36,6 +36,7 @@ describe('GetThreadUseCase', () => {
         id: 'thread-123',
         title: 'Hello, Dicoding',
         body: 'Any want to discuss ?',
+        owner: 'user-123',
         date: '2024-04-24T19:23:55.913Z',
         username: 'dicoding',
       }),
@@ -43,17 +44,21 @@ describe('GetThreadUseCase', () => {
     mockThreadRepository.getCommentByThreadId = jest.fn(() => Promise.resolve([
       new Comment({
         id: 'comment-456',
-        username: 'john',
-        date: '2024-04-20T19:23:55.913Z',
+        threadId: 'thread-123',
         comment: 'ini comment',
+        owner: 'user-124',
+        date: '2024-04-20T19:23:55.913Z',
         deletedDate: '2024-04-21T19:23:55.913Z',
+        username: 'john',
       }),
       new Comment({
         id: 'comment-123',
-        username: 'dicoding',
-        date: '2024-04-24T19:23:55.913Z',
+        threadId: 'thread-123',
         comment: 'ini comment',
+        owner: 'user-123',
+        date: '2024-04-24T19:23:55.913Z',
         deletedDate: null,
+        username: 'dicoding',
       }),
     ]));
 

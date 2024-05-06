@@ -14,14 +14,14 @@ describe('AddThreadCommentUseCase', () => {
     // mock
     const mockThreadRepository = new ThreadRepository();
     const date = '2021-08-08T07:22:13.017Z';
-    const getComment = new AddComment({
-      comment: useCasePayload.comment,
+    const addedComment = {
+      id: 'comment-123',
+      content: useCasePayload.comment,
       owner: useCasePayload.owner,
-      threadId: useCasePayload.threadId,
       date,
-    });
+    };
     mockThreadRepository.verifyThreadAvailability = jest.fn(() => true);
-    mockThreadRepository.addComment = jest.fn(() => Promise.resolve(getComment));
+    mockThreadRepository.addComment = jest.fn(() => Promise.resolve(addedComment));
 
     const dateNowSpy = jest.spyOn(Date.prototype, 'toISOString');
     dateNowSpy.mockImplementationOnce(() => date);
@@ -46,10 +46,11 @@ describe('AddThreadCommentUseCase', () => {
         date,
       }));
 
-    expect(comment.owner).toStrictEqual(getComment.owner);
-    expect(comment.content).toStrictEqual(getComment.comment);
-    expect(comment.owner).toStrictEqual(getComment.owner);
-    expect(comment.date).toStrictEqual(getComment.date);
+    expect(comment.id).toStrictEqual(addedComment.id);
+    expect(comment.owner).toStrictEqual(addedComment.owner);
+    expect(comment.content).toStrictEqual(addedComment.comment);
+    expect(comment.owner).toStrictEqual(addedComment.owner);
+    expect(comment.date).toStrictEqual(addedComment.date);
   });
 
   it('should throw error if payload not contain needed property', async () => {

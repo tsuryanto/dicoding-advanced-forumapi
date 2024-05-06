@@ -14,13 +14,14 @@ describe('AddThreadUseCase', () => {
     // mock
     const mockThreadRepository = new ThreadRepository();
     const date = '2024-04-24T19:23:55.913Z';
-    const getThread = new AddThread({
+    const addedThread = {
+      id: 'thread-123',
       title: useCasePayload.title,
       body: useCasePayload.body,
       owner: 'user-123',
       date,
-    });
-    mockThreadRepository.addThread = jest.fn(() => Promise.resolve(getThread));
+    };
+    mockThreadRepository.addThread = jest.fn(() => Promise.resolve(addedThread));
 
     const dateNowSpy = jest.spyOn(Date.prototype, 'toISOString');
     dateNowSpy.mockImplementationOnce(() => date);
@@ -35,8 +36,13 @@ describe('AddThreadUseCase', () => {
     dateNowSpy.mockRestore();
 
     // Assert
-    expect(thread).toStrictEqual(getThread);
-    expect(mockThreadRepository.addThread).toHaveBeenCalledWith(getThread);
+    expect(thread).toStrictEqual(addedThread);
+    expect(mockThreadRepository.addThread).toHaveBeenCalledWith(new AddThread({
+      owner: useCasePayload.owner,
+      title: useCasePayload.title,
+      body: useCasePayload.body,
+      date,
+    }));
   });
 
   it('should throw error if payload not contain needed property', async () => {
