@@ -1,6 +1,7 @@
 const AddThreadCommentUseCase = require('../AddThreadCommentUseCase');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const AddComment = require('../../../Domains/threads/entities/AddComment');
+const Comment = require('../../../Domains/threads/entities/Comment');
 
 describe('AddThreadCommentUseCase', () => {
   it('should orchestrating the add comment action correctly', async () => {
@@ -21,7 +22,12 @@ describe('AddThreadCommentUseCase', () => {
       date,
     };
     mockThreadRepository.verifyThreadAvailability = jest.fn(() => true);
-    mockThreadRepository.addComment = jest.fn(() => Promise.resolve(addedComment));
+    mockThreadRepository.addComment = jest.fn(() => Promise.resolve(new Comment({
+      id: addedComment.id,
+      content: addedComment.content,
+      owner: addedComment.owner,
+      date: addedComment.date,
+    })));
 
     const dateNowSpy = jest.spyOn(Date.prototype, 'toISOString');
     dateNowSpy.mockImplementationOnce(() => date);
@@ -63,7 +69,7 @@ describe('AddThreadCommentUseCase', () => {
     // Action & Assert
     await expect(addThreadCommentUseCase.execute(useCasePayload))
       .rejects
-      .toThrowError('ADD_COMMENT_USE_CASE.NOT_CONTAIN_NEEDED_PROPERTY');
+      .toThrowError('ADD_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
   });
 
   it('should throw error if payload not meet data type specification', async () => {
@@ -78,7 +84,7 @@ describe('AddThreadCommentUseCase', () => {
     // Action & Assert
     await expect(addThreadCommentUseCase.execute(useCasePayload))
       .rejects
-      .toThrowError('ADD_COMMENT_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
+      .toThrowError('ADD_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
   });
 
   it('should throw error if thread not found', async () => {

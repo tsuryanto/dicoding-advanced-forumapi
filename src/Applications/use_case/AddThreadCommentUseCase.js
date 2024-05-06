@@ -6,8 +6,6 @@ class AddThreadCommentUseCase {
   }
 
   async execute(useCasePayload) {
-    this._verifyPayload(useCasePayload);
-
     const {
       comment, owner, threadId,
     } = useCasePayload;
@@ -29,16 +27,6 @@ class AddThreadCommentUseCase {
       owner: addedComment.owner,
       date: addedComment.date,
     };
-  }
-
-  _verifyPayload(payload) {
-    if (!payload.comment || !payload.owner || !payload.threadId) {
-      throw new Error('ADD_COMMENT_USE_CASE.NOT_CONTAIN_NEEDED_PROPERTY');
-    }
-
-    if (typeof payload.comment !== 'string' || typeof payload.owner !== 'string' || typeof payload.threadId !== 'string') {
-      throw new Error('ADD_COMMENT_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
-    }
   }
 }
 

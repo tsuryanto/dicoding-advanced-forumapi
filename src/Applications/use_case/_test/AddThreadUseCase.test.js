@@ -1,6 +1,7 @@
 const AddThreadUseCase = require('../AddThreadUseCase');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const AddThread = require('../../../Domains/threads/entities/AddThread');
+const Thread = require('../../../Domains/threads/entities/Thread');
 
 describe('AddThreadUseCase', () => {
   it('should orchestrating the add thread action correctly', async () => {
@@ -14,14 +15,20 @@ describe('AddThreadUseCase', () => {
     // mock
     const mockThreadRepository = new ThreadRepository();
     const date = '2024-04-24T19:23:55.913Z';
-    const addedThread = {
+    const addedThread = new Thread({
       id: 'thread-123',
       title: useCasePayload.title,
       body: useCasePayload.body,
       owner: 'user-123',
       date,
-    };
-    mockThreadRepository.addThread = jest.fn(() => Promise.resolve(addedThread));
+    });
+    mockThreadRepository.addThread = jest.fn(() => Promise.resolve(new Thread({
+      id: addedThread.id,
+      title: addedThread.title,
+      body: addedThread.body,
+      owner: addedThread.owner,
+      date: addedThread.date,
+    })));
 
     const dateNowSpy = jest.spyOn(Date.prototype, 'toISOString');
     dateNowSpy.mockImplementationOnce(() => date);
@@ -55,7 +62,7 @@ describe('AddThreadUseCase', () => {
     // Action & Assert
     await expect(addThreadUseCase.execute(useCasePayload))
       .rejects
-      .toThrowError('ADD_THREAD_USE_CASE.NOT_CONTAIN_NEEDED_PROPERTY');
+      .toThrowError('ADD_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
   });
 
   it('should throw error if payload not meet data type specification', async () => {
@@ -70,6 +77,6 @@ describe('AddThreadUseCase', () => {
     // Action & Assert
     await expect(addThreadUseCase.execute(useCasePayload))
       .rejects
-      .toThrowError('ADD_THREAD_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
+      .toThrowError('ADD_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
   });
 });
