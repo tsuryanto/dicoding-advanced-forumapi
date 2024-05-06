@@ -4,6 +4,8 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const pool = require('../../database/postgres/pool');
 const AddThread = require('../../../Domains/threads/entities/AddThread');
 const AddComment = require('../../../Domains/threads/entities/AddComment');
+const Thread = require('../../../Domains/threads/entities/Thread');
+const Comment = require('../../../Domains/threads/entities/Comment');
 
 describe('ThreadRepositoryPostgres', () => {
   afterEach(async () => {
@@ -35,12 +37,13 @@ describe('ThreadRepositoryPostgres', () => {
       });
       const addedThread = await threadRepository.addThread(payload);
 
-      expect(addedThread.id).toEqual('thread-456');
-      expect(addedThread.title).toEqual(payload.title);
-      expect(addedThread.owner).toEqual(payload.owner);
-      expect(addedThread.body).toEqual(payload.body);
-      expect(addedThread.date).toEqual(payload.date);
-
+      expect(addedThread).toStrictEqual(new Thread({
+        id: 'thread-456',
+        title: payload.title,
+        body: payload.body,
+        owner: payload.owner,
+        date: payload.date,
+      }));
       const threads = await ThreadsTableTestHelper.findThreadsById('thread-456');
       expect(threads).toHaveLength(1);
     });
@@ -64,13 +67,14 @@ describe('ThreadRepositoryPostgres', () => {
 
       // Action
       const thread = await threadRepository.getThreadById('thread-123');
-
-      expect(thread.id).toEqual('thread-123');
-      expect(thread.title).toEqual(payload.title);
-      expect(thread.owner).toEqual(payload.owner);
-      expect(thread.body).toEqual(payload.body);
-      expect(thread.date).toEqual(payload.date);
-      expect(thread.username).toEqual('dicoding');
+      expect(thread).toStrictEqual(new Thread({
+        id: 'thread-123',
+        title: payload.title,
+        body: payload.body,
+        owner: payload.owner,
+        date: payload.date,
+        username: 'dicoding',
+      }));
     });
 
     it('should return null when thread not found', async () => {
@@ -137,11 +141,14 @@ describe('ThreadRepositoryPostgres', () => {
         date: '2024-08-08T07:22:58.000Z',
       });
       const addedComment = await threadRepository.addComment(payload);
-      expect(addedComment.id).toEqual('threadComment-123');
-      expect(addedComment.threadId).toEqual(payload.threadId);
-      expect(addedComment.owner).toEqual(payload.owner);
-      expect(addedComment.comment).toEqual(payload.comment);
-      expect(addedComment.date).toEqual(payload.date);
+
+      expect(addedComment).toStrictEqual(new Comment({
+        id: 'threadComment-123',
+        threadId: payload.threadId,
+        owner: payload.owner,
+        comment: payload.comment,
+        date: payload.date,
+      }));
 
       const comments = await ThreadsTableTestHelper.findCommentsById('threadComment-123');
       expect(comments).toHaveLength(1);
@@ -173,11 +180,14 @@ describe('ThreadRepositoryPostgres', () => {
 
       // Action
       const comment = await threadRepository.getCommentById('threadComment-123');
-      expect(comment.id).toEqual('threadComment-123');
-      expect(comment.threadId).toEqual(payload.threadId);
-      expect(comment.owner).toEqual(payload.owner);
-      expect(comment.comment).toEqual(payload.comment);
-      expect(comment.date).toEqual(payload.date);
+      expect(comment).toStrictEqual(new Comment({
+        id: 'threadComment-123',
+        threadId: payload.threadId,
+        owner: payload.owner,
+        comment: payload.comment,
+        date: payload.date,
+        deletedDate: null,
+      }));
     });
 
     it('should return empty array when comment not found', async () => {
@@ -350,11 +360,15 @@ describe('ThreadRepositoryPostgres', () => {
       // Action
       const comments = await threadRepository.getCommentByThreadId('thread-123');
       expect(comments).toHaveLength(1);
-      expect(comments[0].id).toEqual('threadComment-123');
-      expect(comments[0].threadId).toEqual(payload.threadId);
-      expect(comments[0].owner).toEqual(payload.owner);
-      expect(comments[0].comment).toEqual(payload.comment);
-      expect(comments[0].date).toEqual(payload.date);
+      expect(comments[0]).toStrictEqual(new Comment({
+        id: 'threadComment-123',
+        threadId: payload.threadId,
+        owner: payload.owner,
+        comment: payload.comment,
+        date: payload.date,
+        deletedDate: null,
+        username: 'dicoding',
+      }));
     });
   });
 });
