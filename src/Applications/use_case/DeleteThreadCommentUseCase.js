@@ -1,6 +1,7 @@
 class DeleteThreadCommentUseCase {
-  constructor({ threadRepository }) {
+  constructor({ threadRepository, commentRepository }) {
     this._threadRepository = threadRepository;
+    this._commentRepository = commentRepository;
   }
 
   async execute(useCasePayload) {
@@ -13,17 +14,17 @@ class DeleteThreadCommentUseCase {
       throw new Error('DELETE_COMMENT_USE_CASE.THREAD_NOT_FOUND');
     }
 
-    const isCommentExist = await this._threadRepository.verifyCommentAvailability(commentId);
+    const isCommentExist = await this._commentRepository.verifyCommentAvailability(commentId);
     if (!isCommentExist) {
       throw new Error('DELETE_COMMENT_USE_CASE.COMMENT_NOT_FOUND');
     }
 
-    const isAllowed = await this._threadRepository.verifyCommentOwnership(commentId, owner);
+    const isAllowed = await this._commentRepository.verifyCommentOwnership(commentId, owner);
     if (!isAllowed) {
       throw new Error('DELETE_COMMENT_USE_CASE.NOT_THE_COMMENT_OWNER');
     }
 
-    const isDeleted = await this._threadRepository.deleteCommentById(commentId, date);
+    const isDeleted = await this._commentRepository.deleteCommentById(commentId, date);
     if (!isDeleted) {
       throw new Error('DELETE_COMMENT_USE_CASE.FAILED_TO_DELETE_COMMENT');
     }

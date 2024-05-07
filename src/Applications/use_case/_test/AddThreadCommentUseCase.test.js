@@ -1,5 +1,6 @@
 const AddThreadCommentUseCase = require('../AddThreadCommentUseCase');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
+const CommentRepository = require('../../../Domains/threads/CommentRepository');
 const AddComment = require('../../../Domains/threads/entities/AddComment');
 const Comment = require('../../../Domains/threads/entities/Comment');
 
@@ -14,6 +15,8 @@ describe('AddThreadCommentUseCase', () => {
 
     // mock
     const mockThreadRepository = new ThreadRepository();
+    const mockCommentRepository = new CommentRepository();
+
     const date = '2021-08-08T07:22:13.017Z';
     const addedComment = {
       id: 'comment-123',
@@ -22,7 +25,7 @@ describe('AddThreadCommentUseCase', () => {
       date,
     };
     mockThreadRepository.verifyThreadAvailability = jest.fn(() => true);
-    mockThreadRepository.addComment = jest.fn(() => Promise.resolve(new Comment({
+    mockCommentRepository.addComment = jest.fn(() => Promise.resolve(new Comment({
       id: addedComment.id,
       content: addedComment.content,
       owner: addedComment.owner,
@@ -35,6 +38,7 @@ describe('AddThreadCommentUseCase', () => {
     // Action
     const addThreadCommentUseCase = new AddThreadCommentUseCase({
       threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository,
     });
     const comment = await addThreadCommentUseCase.execute(useCasePayload);
 
@@ -44,7 +48,7 @@ describe('AddThreadCommentUseCase', () => {
     // Assert
     expect(mockThreadRepository.verifyThreadAvailability)
       .toHaveBeenCalledWith(useCasePayload.threadId);
-    expect(mockThreadRepository.addComment)
+    expect(mockCommentRepository.addComment)
       .toHaveBeenCalledWith(new AddComment({
         comment: useCasePayload.comment,
         owner: useCasePayload.owner,

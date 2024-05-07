@@ -1,11 +1,12 @@
 class GetThreadUseCase {
-  constructor({ threadRepository }) {
+  constructor({ threadRepository, commentRepository }) {
     this._threadRepository = threadRepository;
+    this._commentRepository = commentRepository;
   }
 
   async execute(threadId) {
     const thread = await this._threadRepository.getThreadById(threadId);
-    const comments = await this._threadRepository.getCommentByThreadId(threadId);
+    const comments = await this._commentRepository.getCommentByThreadId(threadId);
 
     if (!thread) {
       throw new Error('GET_THREAD_USE_CASE.NOT_FOUND');
