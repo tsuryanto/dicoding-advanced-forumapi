@@ -13,3 +13,8 @@ ForumAPI is a project designed to provide APIs for creating threads and replying
 
     Navigate to the root directory of the project, then open a terminal (or Command Prompt on Windows).
 
+2. **Install the dependencies**
+
+    ```bash
+    npm install
+    ```
