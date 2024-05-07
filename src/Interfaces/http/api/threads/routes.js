@@ -8,22 +8,6 @@ const routes = (handler) => ([
     },
   },
   {
-    method: 'POST',
-    path: '/threads/{threadId}/comments',
-    handler: handler.postThreadCommentHandler,
-    options: {
-      auth: 'forumApiJWT',
-    },
-  },
-  {
-    method: 'DELETE',
-    path: '/threads/{threadId}/comments/{commentId}',
-    handler: handler.deleteThreadCommentHandler,
-    options: {
-      auth: 'forumApiJWT',
-    },
-  },
-  {
     method: 'GET',
     path: '/threads/{threadId}',
     handler: handler.getThreadByIdHandler,

@@ -1,4 +1,4 @@
-class DeleteThreadCommentUseCase {
+class DeleteCommentUseCase {
   constructor({ threadRepository, commentRepository }) {
     this._threadRepository = threadRepository;
     this._commentRepository = commentRepository;
@@ -42,4 +42,4 @@ class DeleteThreadCommentUseCase {
   }
 }
 
-module.exports = DeleteThreadCommentUseCase;
+module.exports = DeleteCommentUseCase;

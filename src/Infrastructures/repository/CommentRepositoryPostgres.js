@@ -1,7 +1,7 @@
-const CommentRepository = require('../../Domains/threads/CommentRepository');
-const Comment = require('../../Domains/threads/entities/Comment');
+const CommentRepository = require('../../Domains/comments/CommentRepository');
+const Comment = require('../../Domains/comments/entities/Comment');
 
-class ThreadCommentRepositoryPostgres extends CommentRepository {
+class CommentRepositoryPostgres extends CommentRepository {
   constructor(pool, idGenerator) {
     super();
     this._pool = pool;
@@ -91,4 +91,4 @@ class ThreadCommentRepositoryPostgres extends CommentRepository {
   }
 }
 
-module.exports = ThreadCommentRepositoryPostgres;
+module.exports = CommentRepositoryPostgres;

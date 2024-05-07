@@ -1,16 +1,16 @@
 const ThreadRepositoryPostgres = require('../ThreadRepositoryPostgres');
-const ThreadCommentRepositoryPostgres = require('../ThreadCommentRepositoryPostgres');
+const CommentRepositoryPostgres = require('../CommentRepositoryPostgres');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
-const ThreadCommentsTableTestHelper = require('../../../../tests/ThreadCommentsTableTestHelper');
+const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const pool = require('../../database/postgres/pool');
 const AddThread = require('../../../Domains/threads/entities/AddThread');
-const AddComment = require('../../../Domains/threads/entities/AddComment');
-const Comment = require('../../../Domains/threads/entities/Comment');
+const AddComment = require('../../../Domains/comments/entities/AddComment');
+const Comment = require('../../../Domains/comments/entities/Comment');
 
-describe('ThreadCommentRepositoryPostgres', () => {
+describe('CommentRepositoryPostgres', () => {
   afterEach(async () => {
-    await ThreadCommentsTableTestHelper.cleanTable();
+    await CommentsTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
   });
 
@@ -29,7 +29,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
 
       // Arrange
       const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
-      const commentRepository = new ThreadCommentRepositoryPostgres(pool, fakeIdGenerator);
+      const commentRepository = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 
       // pre
       await threadRepository.addThread(new AddThread({
@@ -56,7 +56,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
         date: payload.date,
       }));
 
-      const comments = await ThreadCommentsTableTestHelper.findCommentsById('threadComment-123');
+      const comments = await CommentsTableTestHelper.findCommentsById('threadComment-123');
       expect(comments).toHaveLength(1);
     });
   });
@@ -67,7 +67,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
 
       // Arrange
       const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
-      const commentRepository = new ThreadCommentRepositoryPostgres(pool, fakeIdGenerator);
+      const commentRepository = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 
       // pre
       await threadRepository.addThread(new AddThread({
@@ -101,7 +101,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
       const fakeIdGenerator = () => '123';
 
       // Arrange
-      const commentRepository = new ThreadCommentRepositoryPostgres(pool, fakeIdGenerator);
+      const commentRepository = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 
       // Action
       const comment = await commentRepository.getCommentById('thread-123');
@@ -109,13 +109,13 @@ describe('ThreadCommentRepositoryPostgres', () => {
     });
   });
 
-  describe('verifyThreadCommentAvailability function', () => {
+  describe('verifyCommentAvailability function', () => {
     it('should return true if comment exists', async () => {
       const fakeIdGenerator = () => '123';
 
       // Arrange
       const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
-      const commentRepository = new ThreadCommentRepositoryPostgres(pool, fakeIdGenerator);
+      const commentRepository = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 
       // pre
       await threadRepository.addThread(new AddThread({
@@ -139,7 +139,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
 
     it('should return false if comment not exists', async () => {
       // Arrange
-      const commentRepository = new ThreadCommentRepositoryPostgres(pool, {});
+      const commentRepository = new CommentRepositoryPostgres(pool, {});
 
       // Action
       const available = await commentRepository.verifyCommentAvailability('threadComment-123');
@@ -153,7 +153,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
 
       // Arrange
       const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
-      const commentRepository = new ThreadCommentRepositoryPostgres(pool, fakeIdGenerator);
+      const commentRepository = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 
       // pre
       await threadRepository.addThread(new AddThread({
@@ -180,7 +180,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
 
       // Arrange
       const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
-      const commentRepository = new ThreadCommentRepositoryPostgres(pool, fakeIdGenerator);
+      const commentRepository = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 
       // pre
       await threadRepository.addThread(new AddThread({
@@ -209,7 +209,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
 
       // Arrange
       const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
-      const commentRepository = new ThreadCommentRepositoryPostgres(pool, fakeIdGenerator);
+      const commentRepository = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 
       // pre
       await threadRepository.addThread(new AddThread({
@@ -238,7 +238,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
       const fakeIdGenerator = () => '123';
 
       // Arrange
-      const commentRepository = new ThreadCommentRepositoryPostgres(pool, fakeIdGenerator);
+      const commentRepository = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 
       // Action
       const deleted = await commentRepository.deleteCommentById('threadComment-123', '2024-08-08T07:22:58.000Z');
@@ -251,7 +251,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
       const fakeIdGenerator = () => '123';
 
       const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
-      const commentRepository = new ThreadCommentRepositoryPostgres(pool, fakeIdGenerator);
+      const commentRepository = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 
       // pre
       await threadRepository.addThread(new AddThread({

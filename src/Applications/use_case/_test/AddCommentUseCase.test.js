@@ -1,10 +1,10 @@
-const AddThreadCommentUseCase = require('../AddThreadCommentUseCase');
+const AddCommentUseCase = require('../AddCommentUseCase');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
-const CommentRepository = require('../../../Domains/threads/CommentRepository');
-const AddComment = require('../../../Domains/threads/entities/AddComment');
-const Comment = require('../../../Domains/threads/entities/Comment');
+const CommentRepository = require('../../../Domains/comments/CommentRepository');
+const AddComment = require('../../../Domains/comments/entities/AddComment');
+const Comment = require('../../../Domains/comments/entities/Comment');
 
-describe('AddThreadCommentUseCase', () => {
+describe('AddCommentUseCase', () => {
   it('should orchestrating the add comment action correctly', async () => {
     // Arrange
     const useCasePayload = {
@@ -36,11 +36,11 @@ describe('AddThreadCommentUseCase', () => {
     dateNowSpy.mockImplementationOnce(() => date);
 
     // Action
-    const addThreadCommentUseCase = new AddThreadCommentUseCase({
+    const addCommentUseCase = new AddCommentUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
     });
-    const comment = await addThreadCommentUseCase.execute(useCasePayload);
+    const comment = await addCommentUseCase.execute(useCasePayload);
 
     // reset mock
     dateNowSpy.mockRestore();
@@ -68,10 +68,10 @@ describe('AddThreadCommentUseCase', () => {
     const useCasePayload = {
       owner: 'user-123',
     };
-    const addThreadCommentUseCase = new AddThreadCommentUseCase({});
+    const addCommentUseCase = new AddCommentUseCase({});
 
     // Action & Assert
-    await expect(addThreadCommentUseCase.execute(useCasePayload))
+    await expect(addCommentUseCase.execute(useCasePayload))
       .rejects
       .toThrowError('ADD_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
   });
@@ -83,10 +83,10 @@ describe('AddThreadCommentUseCase', () => {
       owner: 'user-123',
       threadId: 'thread-123',
     };
-    const addThreadCommentUseCase = new AddThreadCommentUseCase({});
+    const addCommentUseCase = new AddCommentUseCase({});
 
     // Action & Assert
-    await expect(addThreadCommentUseCase.execute(useCasePayload))
+    await expect(addCommentUseCase.execute(useCasePayload))
       .rejects
       .toThrowError('ADD_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
   });
@@ -102,13 +102,13 @@ describe('AddThreadCommentUseCase', () => {
       owner: 'user-123',
       threadId: 'thread-123',
     };
-    const addThreadCommentUseCase = new AddThreadCommentUseCase({
+    const addCommentUseCase = new AddCommentUseCase({
       threadRepository: mockThreadRepository,
     });
 
     // Action & Assert
 
-    await expect(addThreadCommentUseCase.execute(useCasePayload))
+    await expect(addCommentUseCase.execute(useCasePayload))
       .rejects
       .toThrowError('ADD_COMMENT_USE_CASE.THREAD_NOT_FOUND');
     expect(mockThreadRepository.verifyThreadAvailability)

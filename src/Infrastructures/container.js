@@ -27,12 +27,12 @@ const RefreshAuthenticationUseCase = require('../Applications/use_case/RefreshAu
 
 // Thread
 const ThreadRepository = require('../Domains/threads/ThreadRepository');
-const CommentRepository = require('../Domains/threads/CommentRepository');
+const CommentRepository = require('../Domains/comments/CommentRepository');
 const ThreadRepositoryPostgres = require('./repository/ThreadRepositoryPostgres');
-const ThreadCommentRepositoryPostgres = require('./repository/ThreadCommentRepositoryPostgres');
+const CommentRepositoryPostgres = require('./repository/CommentRepositoryPostgres');
 const AddThreadUseCase = require('../Applications/use_case/AddThreadUseCase');
-const AddThreadCommentUseCase = require('../Applications/use_case/AddThreadCommentUseCase');
-const DeleteThreadCommentUseCase = require('../Applications/use_case/DeleteThreadCommentUseCase');
+const AddCommentUseCase = require('../Applications/use_case/AddCommentUseCase');
+const DeleteCommentUseCase = require('../Applications/use_case/DeleteCommentUseCase');
 const GetThreadUseCase = require('../Applications/use_case/GetThreadUseCase');
 
 // creating container
@@ -103,7 +103,7 @@ container.register([
   },
   {
     key: CommentRepository.name,
-    Class: ThreadCommentRepositoryPostgres,
+    Class: CommentRepositoryPostgres,
     parameter: {
       dependencies: [
         {
@@ -205,8 +205,8 @@ container.register([
     },
   },
   {
-    key: AddThreadCommentUseCase.name,
-    Class: AddThreadCommentUseCase,
+    key: AddCommentUseCase.name,
+    Class: AddCommentUseCase,
     parameter: {
       injectType: 'destructuring',
       dependencies: [
@@ -222,8 +222,8 @@ container.register([
     },
   },
   {
-    key: DeleteThreadCommentUseCase.name,
-    Class: DeleteThreadCommentUseCase,
+    key: DeleteCommentUseCase.name,
+    Class: DeleteCommentUseCase,
     parameter: {
       injectType: 'destructuring',
       dependencies: [

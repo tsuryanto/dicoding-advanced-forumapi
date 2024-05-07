@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 const pool = require('../src/Infrastructures/database/postgres/pool');
 
-const ThreadCommentsTableTestHelper = {
+const CommentsTableTestHelper = {
   async addComment({
     id = 'comment-123', comment = 'dicoding comment', owner = 'user-123', threadId = 'thread-123', date = new Date().toISOString(),
   }) {
@@ -37,4 +37,4 @@ const ThreadCommentsTableTestHelper = {
   },
 };
 
-module.exports = ThreadCommentsTableTestHelper;
+module.exports = CommentsTableTestHelper;

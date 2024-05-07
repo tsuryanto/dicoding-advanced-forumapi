@@ -1,7 +1,7 @@
 const GetThreadUseCase = require('../GetThreadUseCase');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
-const CommentRepository = require('../../../Domains/threads/CommentRepository');
-const Comment = require('../../../Domains/threads/entities/Comment');
+const CommentRepository = require('../../../Domains/comments/CommentRepository');
+const Comment = require('../../../Domains/comments/entities/Comment');
 const Thread = require('../../../Domains/threads/entities/Thread');
 
 describe('GetThreadUseCase', () => {

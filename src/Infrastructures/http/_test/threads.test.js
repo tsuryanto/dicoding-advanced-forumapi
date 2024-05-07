@@ -3,7 +3,7 @@ const pool = require('../../database/postgres/pool');
 const container = require('../../container');
 const createServer = require('../createServer');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
-const ThreadCommentsTableTestHelper = require('../../../../tests/ThreadCommentsTableTestHelper');
+const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 
 describe('/threads endpoint', () => {
@@ -13,7 +13,7 @@ describe('/threads endpoint', () => {
   });
 
   afterEach(async () => {
-    await ThreadCommentsTableTestHelper.cleanTable();
+    await CommentsTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
   });
 
@@ -177,7 +177,7 @@ describe('/threads endpoint', () => {
         owner: 'user-apitest123',
       });
 
-      await ThreadCommentsTableTestHelper.addComment({
+      await CommentsTableTestHelper.addComment({
         id: 'comment-apitest123', threadId: 'thread-commentdelete-apitest123', content: 'dicoding content', owner: 'user-apitest123',
       });
 
@@ -225,7 +225,7 @@ describe('/threads endpoint', () => {
         owner: 'user-apitest123',
       });
 
-      await ThreadCommentsTableTestHelper.addComment({
+      await CommentsTableTestHelper.addComment({
         id: 'comment-apitest123',
         threadId: 'thread-commentdelete-apitest123',
         content: 'dicoding content',
@@ -261,19 +261,19 @@ describe('/threads endpoint', () => {
         body: 'secret',
         owner: 'user-apitest123',
       });
-      await ThreadCommentsTableTestHelper.addComment({
+      await CommentsTableTestHelper.addComment({
         id: 'comment-apitest123',
         threadId: 'thread-get-apitest123',
         content: 'dicoding content',
         owner: 'user-apitest123',
       });
-      await ThreadCommentsTableTestHelper.addComment({
+      await CommentsTableTestHelper.addComment({
         id: 'comment-apitest124',
         threadId: 'thread-get-apitest123',
         content: 'dicoding content',
         owner: 'user-apitest123',
       });
-      await ThreadCommentsTableTestHelper.deleteCommentById('comment-apitest124');
+      await CommentsTableTestHelper.deleteCommentById('comment-apitest124');
 
       // Arrange
       const server = await createServer(container);
