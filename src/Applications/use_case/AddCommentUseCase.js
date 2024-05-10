@@ -22,12 +22,7 @@ class AddCommentUseCase {
     }
 
     const addedComment = await this._commentRepository.addComment(addComment);
-    return {
-      id: addedComment.id,
-      content: addedComment.content,
-      owner: addedComment.owner,
-      date: addedComment.date,
-    };
+    return addedComment;
   }
 }
 

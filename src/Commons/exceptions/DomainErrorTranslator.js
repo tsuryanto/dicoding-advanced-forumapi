@@ -31,6 +31,12 @@ DomainErrorTranslator._directories = {
   'DELETE_COMMENT_USE_CASE.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat menghapus komentar karena tipe data tidak sesuai'),
   'DELETE_COMMENT_USE_CASE.NOT_THE_COMMENT_OWNER': new AuthorizationError('Anda tidak berhak mengakses resource ini'),
   'GET_THREAD_USE_CASE.NOT_FOUND': new NotFoundError('thread tidak ditemukan'),
+  'COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat mengembalikan komentar karena properti yang dibutuhkan tidak ada'),
+  'COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat mengembalikan komentar karena tipe data tidak sesuai'),
+  'ADDED_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat mengembalikan komentar yang ditambahkan karena properti yang dibutuhkan tidak ada'),
+  'ADDED_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat mengembalikan komentar yang ditambahkan karena tipe data tidak sesuai'),
+  'THREAD.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat mengembalikan thread karena properti yang dibutuhkan tidak ada'),
+  'THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat mengembalikan thread karena tipe data tidak sesuai'),
 };
 
 module.exports = DomainErrorTranslator;

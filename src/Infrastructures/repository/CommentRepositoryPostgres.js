@@ -1,5 +1,6 @@
 const CommentRepository = require('../../Domains/comments/CommentRepository');
 const Comment = require('../../Domains/comments/entities/Comment');
+const AddedComment = require('../../Domains/comments/entities/AddedComment');
 
 class CommentRepositoryPostgres extends CommentRepository {
   constructor(pool, idGenerator) {
@@ -15,13 +16,13 @@ class CommentRepositoryPostgres extends CommentRepository {
     const id = `threadComment-${this._idGenerator()}`;
 
     const query = {
-      text: 'INSERT INTO threadcomments (id, "threadId", content, owner, date) VALUES($1, $2, $3, $4, $5) RETURNING id, "threadId", content, owner, date',
+      text: 'INSERT INTO threadcomments (id, "threadId", content, owner, date) VALUES($1, $2, $3, $4, $5) RETURNING id, content, owner',
       values: [id, threadId, content, owner, date],
     };
 
     const result = await this._pool.query(query);
 
-    return new Comment({ ...result.rows[0] });
+    return new AddedComment({ ...result.rows[0] });
   }
 
   async getCommentByThreadId(threadId) {
@@ -36,7 +37,7 @@ class CommentRepositoryPostgres extends CommentRepository {
 
   async getCommentById(commentId) {
     const query = {
-      text: 'SELECT * FROM threadcomments WHERE id = $1',
+      text: 'SELECT threadcomments.*, users.username FROM threadcomments JOIN users on users.id = threadcomments.owner WHERE threadcomments.id = $1',
       values: [commentId],
     };
 

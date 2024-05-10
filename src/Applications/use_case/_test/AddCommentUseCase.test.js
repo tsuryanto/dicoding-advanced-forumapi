@@ -2,7 +2,7 @@ const AddCommentUseCase = require('../AddCommentUseCase');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
 const AddComment = require('../../../Domains/comments/entities/AddComment');
-const Comment = require('../../../Domains/comments/entities/Comment');
+const AddedComment = require('../../../Domains/comments/entities/AddedComment');
 
 describe('AddCommentUseCase', () => {
   it('should orchestrating the add comment action correctly', async () => {
@@ -18,18 +18,11 @@ describe('AddCommentUseCase', () => {
     const mockCommentRepository = new CommentRepository();
 
     const date = '2021-08-08T07:22:13.017Z';
-    const addedComment = {
+    mockThreadRepository.verifyThreadAvailability = jest.fn(() => true);
+    mockCommentRepository.addComment = jest.fn(() => Promise.resolve(new AddedComment({
       id: 'comment-123',
       content: useCasePayload.content,
       owner: useCasePayload.owner,
-      date,
-    };
-    mockThreadRepository.verifyThreadAvailability = jest.fn(() => true);
-    mockCommentRepository.addComment = jest.fn(() => Promise.resolve(new Comment({
-      id: addedComment.id,
-      content: addedComment.content,
-      owner: addedComment.owner,
-      date: addedComment.date,
     })));
 
     const dateNowSpy = jest.spyOn(Date.prototype, 'toISOString');
@@ -56,11 +49,11 @@ describe('AddCommentUseCase', () => {
         date,
       }));
 
-    expect(comment.id).toStrictEqual(addedComment.id);
-    expect(comment.owner).toStrictEqual(addedComment.owner);
-    expect(comment.content).toStrictEqual(addedComment.content);
-    expect(comment.owner).toStrictEqual(addedComment.owner);
-    expect(comment.date).toStrictEqual(addedComment.date);
+    expect(comment).toStrictEqual(new AddedComment({
+      id: 'comment-123',
+      content: useCasePayload.content,
+      owner: useCasePayload.owner,
+    }));
   });
 
   it('should throw error if payload not contain needed property', async () => {

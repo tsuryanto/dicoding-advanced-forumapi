@@ -6,6 +6,7 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const pool = require('../../database/postgres/pool');
 const AddThread = require('../../../Domains/threads/entities/AddThread');
 const AddComment = require('../../../Domains/comments/entities/AddComment');
+const AddedComment = require('../../../Domains/comments/entities/AddedComment');
 const Comment = require('../../../Domains/comments/entities/Comment');
 
 describe('CommentRepositoryPostgres', () => {
@@ -48,12 +49,10 @@ describe('CommentRepositoryPostgres', () => {
       });
       const addedComment = await commentRepository.addComment(payload);
 
-      expect(addedComment).toStrictEqual(new Comment({
+      expect(addedComment).toStrictEqual(new AddedComment({
         id: 'threadComment-123',
-        threadId: payload.threadId,
         owner: payload.owner,
         content: payload.content,
-        date: payload.date,
       }));
 
       const comments = await CommentsTableTestHelper.findCommentsById('threadComment-123');
@@ -94,6 +93,7 @@ describe('CommentRepositoryPostgres', () => {
         content: payload.content,
         date: payload.date,
         deletedDate: null,
+        username: 'dicoding',
       }));
     });
 
