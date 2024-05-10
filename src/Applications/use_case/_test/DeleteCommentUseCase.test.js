@@ -16,10 +16,10 @@ describe('DeleteCommentUseCase', () => {
     const mockCommentRepository = new CommentRepository();
     const date = '2021-08-08T07:22:13.017Z';
 
-    mockThreadRepository.verifyThreadAvailability = jest.fn(() => true);
-    mockCommentRepository.verifyCommentAvailability = jest.fn(() => true);
-    mockCommentRepository.verifyCommentOwnership = jest.fn(() => true);
-    mockCommentRepository.deleteCommentById = jest.fn(() => true);
+    mockThreadRepository.verifyThreadAvailability = jest.fn();
+    mockCommentRepository.verifyCommentAvailability = jest.fn();
+    mockCommentRepository.verifyCommentOwnership = jest.fn();
+    mockCommentRepository.deleteCommentById = jest.fn();
 
     const dateNowSpy = jest.spyOn(Date.prototype, 'toISOString');
     dateNowSpy.mockImplementationOnce(() => date);
@@ -53,7 +53,9 @@ describe('DeleteCommentUseCase', () => {
 
     // mock
     const mockThreadRepository = new ThreadRepository();
-    mockThreadRepository.verifyThreadAvailability = jest.fn(() => false);
+    mockThreadRepository.verifyThreadAvailability = jest.fn(() => {
+      throw new Error('THREAD_REPOSITORY.THREAD_NOT_FOUND');
+    });
 
     // Action
     const deleteCommentUseCase = new DeleteCommentUseCase({
@@ -63,7 +65,7 @@ describe('DeleteCommentUseCase', () => {
     // Assert
     await expect(deleteCommentUseCase.execute(useCasePayload))
       .rejects
-      .toThrowError('DELETE_COMMENT_USE_CASE.THREAD_NOT_FOUND');
+      .toThrowError('THREAD_REPOSITORY.THREAD_NOT_FOUND');
     expect(mockThreadRepository.verifyThreadAvailability).toBeCalledWith(useCasePayload.threadId);
   });
 
@@ -77,7 +79,7 @@ describe('DeleteCommentUseCase', () => {
     // Action & Assert
     await expect(deleteCommentUseCase.execute(useCasePayload))
       .rejects
-      .toThrowError('DELETE_COMMENT_USE_CASE.NOT_CONTAIN_NEEDED_PROPERTY');
+      .toThrowError('DELETE_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
   });
 
   it('should throw error if payload not meet data type specification', async () => {
@@ -92,7 +94,7 @@ describe('DeleteCommentUseCase', () => {
     // Action & Assert
     await expect(deleteCommentUseCase.execute(useCasePayload))
       .rejects
-      .toThrowError('DELETE_COMMENT_USE_CASE.NOT_MEET_DATA_TYPE_SPECIFICATION');
+      .toThrowError('DELETE_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
   });
 
   it('should throw error when comment not found', async () => {
@@ -106,8 +108,10 @@ describe('DeleteCommentUseCase', () => {
     // mock
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();
-    mockThreadRepository.verifyThreadAvailability = jest.fn(() => true);
-    mockCommentRepository.verifyCommentAvailability = jest.fn(() => false);
+    mockThreadRepository.verifyThreadAvailability = jest.fn();
+    mockCommentRepository.verifyCommentAvailability = jest.fn(() => {
+      throw new Error('COMMENT_REPOSITORY.COMMENT_NOT_FOUND');
+    });
 
     // Action
     const deleteCommentUseCase = new DeleteCommentUseCase({
@@ -118,7 +122,7 @@ describe('DeleteCommentUseCase', () => {
     // Assert
     await expect(deleteCommentUseCase.execute(useCasePayload))
       .rejects
-      .toThrowError('DELETE_COMMENT_USE_CASE.COMMENT_NOT_FOUND');
+      .toThrowError('COMMENT_REPOSITORY.COMMENT_NOT_FOUND');
     expect(mockThreadRepository.verifyThreadAvailability).toBeCalledWith(useCasePayload.threadId);
     expect(mockCommentRepository.verifyCommentAvailability)
       .toBeCalledWith(useCasePayload.commentId);
@@ -135,9 +139,11 @@ describe('DeleteCommentUseCase', () => {
     // mock
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();
-    mockThreadRepository.verifyThreadAvailability = jest.fn(() => true);
-    mockCommentRepository.verifyCommentAvailability = jest.fn(() => true);
-    mockCommentRepository.verifyCommentOwnership = jest.fn(() => false);
+    mockThreadRepository.verifyThreadAvailability = jest.fn();
+    mockCommentRepository.verifyCommentAvailability = jest.fn();
+    mockCommentRepository.verifyCommentOwnership = jest.fn(() => {
+      throw new Error('COMMENT_REPOSITORY.NOT_THE_COMMENT_OWNER');
+    });
 
     // Action
     const deleteCommentUseCase = new DeleteCommentUseCase({
@@ -148,7 +154,7 @@ describe('DeleteCommentUseCase', () => {
     // Assert
     await expect(deleteCommentUseCase.execute(useCasePayload))
       .rejects
-      .toThrowError('DELETE_COMMENT_USE_CASE.NOT_THE_COMMENT_OWNER');
+      .toThrowError('COMMENT_REPOSITORY.NOT_THE_COMMENT_OWNER');
     expect(mockThreadRepository.verifyThreadAvailability).toBeCalledWith(useCasePayload.threadId);
     expect(mockCommentRepository.verifyCommentAvailability)
       .toBeCalledWith(useCasePayload.commentId);
@@ -168,10 +174,12 @@ describe('DeleteCommentUseCase', () => {
     // mock
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();
-    mockThreadRepository.verifyThreadAvailability = jest.fn(() => true);
-    mockCommentRepository.verifyCommentAvailability = jest.fn(() => true);
-    mockCommentRepository.verifyCommentOwnership = jest.fn(() => true);
-    mockCommentRepository.deleteCommentById = jest.fn(() => false);
+    mockThreadRepository.verifyThreadAvailability = jest.fn();
+    mockCommentRepository.verifyCommentAvailability = jest.fn();
+    mockCommentRepository.verifyCommentOwnership = jest.fn();
+    mockCommentRepository.deleteCommentById = jest.fn(() => {
+      throw new Error('COMMENT_REPOSITORY.FAILED_TO_DELETE_COMMENT');
+    });
 
     const dateNowSpy = jest.spyOn(Date.prototype, 'toISOString');
     dateNowSpy.mockImplementationOnce(() => date);
@@ -185,7 +193,7 @@ describe('DeleteCommentUseCase', () => {
     // Assert
     await expect(deleteCommentUseCase.execute(useCasePayload))
       .rejects
-      .toThrowError('DELETE_COMMENT_USE_CASE.FAILED_TO_DELETE_COMMENT');
+      .toThrowError('COMMENT_REPOSITORY.FAILED_TO_DELETE_COMMENT');
     expect(mockThreadRepository.verifyThreadAvailability).toBeCalledWith(useCasePayload.threadId);
     expect(mockCommentRepository.verifyCommentAvailability)
       .toBeCalledWith(useCasePayload.commentId);

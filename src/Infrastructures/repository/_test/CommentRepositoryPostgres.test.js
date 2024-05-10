@@ -110,7 +110,7 @@ describe('CommentRepositoryPostgres', () => {
   });
 
   describe('verifyCommentAvailability function', () => {
-    it('should return true if comment exists', async () => {
+    it('should not throw error if comment exists', async () => {
       const fakeIdGenerator = () => '123';
 
       // Arrange
@@ -133,22 +133,20 @@ describe('CommentRepositoryPostgres', () => {
       }));
 
       // Action
-      const available = await commentRepository.verifyCommentAvailability('threadComment-123');
-      expect(available).toEqual(true);
+      await expect(commentRepository.verifyCommentAvailability('threadComment-123')).resolves.not.toThrowError();
     });
 
-    it('should return false if comment not exists', async () => {
+    it('should throw error if comment not exists', async () => {
       // Arrange
       const commentRepository = new CommentRepositoryPostgres(pool, {});
 
       // Action
-      const available = await commentRepository.verifyCommentAvailability('threadComment-123');
-      expect(available).toEqual(false);
+      await expect(commentRepository.verifyCommentAvailability('threadComment-123')).rejects.toThrowError('COMMENT_REPOSITORY.COMMENT_NOT_FOUND');
     });
   });
 
   describe('verifyCommentOwnership function', () => {
-    it('should return true if user has comment ownership', async () => {
+    it('should no throw error if user has comment ownership', async () => {
       const fakeIdGenerator = () => '123';
 
       // Arrange
@@ -171,11 +169,10 @@ describe('CommentRepositoryPostgres', () => {
       }));
 
       // Action
-      const ownership = await commentRepository.verifyCommentOwnership('threadComment-123', 'user-threadtest-123');
-      expect(ownership).toEqual(true);
+      await expect(commentRepository.verifyCommentOwnership('threadComment-123', 'user-threadtest-123')).resolves.not.toThrowError();
     });
 
-    it('should return false if user has no comment ownership', async () => {
+    it('should throw error if user has no comment ownership', async () => {
       const fakeIdGenerator = () => '123';
 
       // Arrange
@@ -198,8 +195,7 @@ describe('CommentRepositoryPostgres', () => {
       }));
 
       // Action
-      const ownership = await commentRepository.verifyCommentOwnership('threadComment-123', 'user-threadtest-456');
-      expect(ownership).toEqual(false);
+      await expect(commentRepository.verifyCommentOwnership('threadComment-123', 'user-threadtest-12345')).rejects.toThrowError('COMMENT_REPOSITORY.NOT_THE_COMMENT_OWNER');
     });
   });
 
@@ -227,22 +223,20 @@ describe('CommentRepositoryPostgres', () => {
       }));
 
       // Action
-      const deleted = await commentRepository.deleteCommentById('threadComment-123', '2024-08-08T07:22:58.000Z');
-      expect(deleted).toEqual(true);
+      await expect(commentRepository.deleteCommentById('threadComment-123', '2024-08-08T07:22:58.000Z')).resolves.not.toThrowError();
 
       const comment = await commentRepository.getCommentById('threadComment-123');
       expect(comment.deletedDate).toEqual('2024-08-08T07:22:58.000Z');
     });
 
-    it('should return false when comment not found', async () => {
+    it('should throw error when failed to delete comment', async () => {
       const fakeIdGenerator = () => '123';
 
       // Arrange
       const commentRepository = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 
       // Action
-      const deleted = await commentRepository.deleteCommentById('threadComment-123', '2024-08-08T07:22:58.000Z');
-      expect(deleted).toEqual(false);
+      await expect(commentRepository.deleteCommentById('threadComment-123', '2024-08-08T07:22:58.000Z')).rejects.toThrowError('COMMENT_REPOSITORY.FAILED_TO_DELETE_COMMENT');
     });
   });
 

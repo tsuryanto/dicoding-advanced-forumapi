@@ -18,7 +18,7 @@ describe('AddCommentUseCase', () => {
     const mockCommentRepository = new CommentRepository();
 
     const date = '2021-08-08T07:22:13.017Z';
-    mockThreadRepository.verifyThreadAvailability = jest.fn(() => true);
+    mockThreadRepository.verifyThreadAvailability = jest.fn();
     mockCommentRepository.addComment = jest.fn(() => Promise.resolve(new AddedComment({
       id: 'comment-123',
       content: useCasePayload.content,
@@ -87,7 +87,9 @@ describe('AddCommentUseCase', () => {
   it('should throw error if thread not found', async () => {
     // mock
     const mockThreadRepository = new ThreadRepository();
-    mockThreadRepository.verifyThreadAvailability = jest.fn(() => false);
+    mockThreadRepository.verifyThreadAvailability = jest.fn(() => {
+      throw new Error('ADD_COMMENT_USE_CASE.THREAD_NOT_FOUND');
+    });
 
     // Arrange
     const useCasePayload = {

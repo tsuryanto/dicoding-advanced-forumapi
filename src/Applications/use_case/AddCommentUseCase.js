@@ -16,10 +16,7 @@ class AddCommentUseCase {
       content, owner, threadId, date,
     });
 
-    const isExist = await this._threadRepository.verifyThreadAvailability(threadId);
-    if (!isExist) {
-      throw new Error('ADD_COMMENT_USE_CASE.THREAD_NOT_FOUND');
-    }
+    await this._threadRepository.verifyThreadAvailability(threadId);
 
     const addedComment = await this._commentRepository.addComment(addComment);
     return addedComment;

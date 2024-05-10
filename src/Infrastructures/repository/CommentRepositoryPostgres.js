@@ -57,10 +57,8 @@ class CommentRepositoryPostgres extends CommentRepository {
 
     const result = await this._pool.query(query);
     if (!result.rowCount) {
-      return false;
+      throw new Error('COMMENT_REPOSITORY.COMMENT_NOT_FOUND');
     }
-
-    return true;
   }
 
   async verifyCommentOwnership(commentId, owner) {
@@ -71,10 +69,8 @@ class CommentRepositoryPostgres extends CommentRepository {
 
     const result = await this._pool.query(query);
     if (!result.rowCount) {
-      return false;
+      throw new Error('COMMENT_REPOSITORY.NOT_THE_COMMENT_OWNER');
     }
-
-    return true;
   }
 
   async deleteCommentById(commentId, date) {
@@ -85,10 +81,8 @@ class CommentRepositoryPostgres extends CommentRepository {
 
     const result = await this._pool.query(query);
     if (!result.rowCount) {
-      return false;
+      throw new Error('COMMENT_REPOSITORY.FAILED_TO_DELETE_COMMENT');
     }
-
-    return true;
   }
 }
 
