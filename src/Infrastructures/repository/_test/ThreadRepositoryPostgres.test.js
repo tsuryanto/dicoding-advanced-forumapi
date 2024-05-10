@@ -3,6 +3,7 @@ const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const pool = require('../../database/postgres/pool');
 const AddThread = require('../../../Domains/threads/entities/AddThread');
+const AddedThread = require('../../../Domains/threads/entities/AddedThread');
 const Thread = require('../../../Domains/threads/entities/Thread');
 
 describe('ThreadRepositoryPostgres', () => {
@@ -35,7 +36,7 @@ describe('ThreadRepositoryPostgres', () => {
       });
       const addedThread = await threadRepository.addThread(payload);
 
-      expect(addedThread).toStrictEqual(new Thread({
+      expect(addedThread).toStrictEqual(new AddedThread({
         id: 'thread-456',
         title: payload.title,
         body: payload.body,
@@ -87,7 +88,7 @@ describe('ThreadRepositoryPostgres', () => {
   });
 
   describe('verifyThreadAvailability function', () => {
-    it('should return true if thread exists', async () => {
+    it('should no error if thread exists', async () => {
       const fakeIdGenerator = () => '123';
 
       // Arrange
@@ -101,18 +102,16 @@ describe('ThreadRepositoryPostgres', () => {
         date: '2024-08-08T07:22:58.000Z',
       }));
 
-      // Action
-      const available = await threadRepository.verifyThreadAvailability('thread-123');
-      expect(available).toEqual(true);
+      // action and assert
+      await expect(threadRepository.verifyThreadAvailability('thread-123')).resolves.not.toThrowError();
     });
 
-    it('should return false if thread not exists', async () => {
+    it('should throw error if thread not found', async () => {
       // Arrange
       const threadRepository = new ThreadRepositoryPostgres(pool, {});
 
-      // Action
-      const available = await threadRepository.verifyThreadAvailability('thread-123');
-      expect(available).toEqual(false);
+      // Action & Assert
+      await expect(threadRepository.verifyThreadAvailability('thread-123')).rejects.toThrowError('THREAD_REPOSITORY.THREAD_NOT_FOUND');
     });
   });
 });

@@ -298,7 +298,7 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.comments).toHaveLength(2);
 
       expect(responseJson.data.thread.comments[0].id).toEqual('comment-apitest123');
-      expect(responseJson.data.thread.comments[0].content).toEqual('dicoding comment');
+      expect(responseJson.data.thread.comments[0].content).toEqual('dicoding content');
       expect(responseJson.data.thread.comments[0].username).toEqual('dicoding');
 
       expect(responseJson.data.thread.comments[1].id).toEqual('comment-apitest124');

@@ -16,7 +16,7 @@ class CommentHandler {
 
     const addCommentUseCase = this._container.getInstance(AddCommentUseCase.name);
     const addedComment = await addCommentUseCase.execute({
-      comment: content,
+      content,
       owner: credentialId,
       threadId,
     });

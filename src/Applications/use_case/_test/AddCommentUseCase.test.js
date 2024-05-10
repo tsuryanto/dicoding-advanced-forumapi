@@ -2,13 +2,13 @@ const AddCommentUseCase = require('../AddCommentUseCase');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
 const AddComment = require('../../../Domains/comments/entities/AddComment');
-const Comment = require('../../../Domains/comments/entities/Comment');
+const AddedComment = require('../../../Domains/comments/entities/AddedComment');
 
 describe('AddCommentUseCase', () => {
   it('should orchestrating the add comment action correctly', async () => {
     // Arrange
     const useCasePayload = {
-      comment: 'dicoding',
+      content: 'dicoding',
       owner: 'user-123',
       threadId: 'thread-123',
     };
@@ -18,18 +18,11 @@ describe('AddCommentUseCase', () => {
     const mockCommentRepository = new CommentRepository();
 
     const date = '2021-08-08T07:22:13.017Z';
-    const addedComment = {
+    mockThreadRepository.verifyThreadAvailability = jest.fn();
+    mockCommentRepository.addComment = jest.fn(() => Promise.resolve(new AddedComment({
       id: 'comment-123',
-      content: useCasePayload.comment,
+      content: useCasePayload.content,
       owner: useCasePayload.owner,
-      date,
-    };
-    mockThreadRepository.verifyThreadAvailability = jest.fn(() => true);
-    mockCommentRepository.addComment = jest.fn(() => Promise.resolve(new Comment({
-      id: addedComment.id,
-      content: addedComment.content,
-      owner: addedComment.owner,
-      date: addedComment.date,
     })));
 
     const dateNowSpy = jest.spyOn(Date.prototype, 'toISOString');
@@ -50,17 +43,17 @@ describe('AddCommentUseCase', () => {
       .toHaveBeenCalledWith(useCasePayload.threadId);
     expect(mockCommentRepository.addComment)
       .toHaveBeenCalledWith(new AddComment({
-        comment: useCasePayload.comment,
+        content: useCasePayload.content,
         owner: useCasePayload.owner,
         threadId: useCasePayload.threadId,
         date,
       }));
 
-    expect(comment.id).toStrictEqual(addedComment.id);
-    expect(comment.owner).toStrictEqual(addedComment.owner);
-    expect(comment.content).toStrictEqual(addedComment.comment);
-    expect(comment.owner).toStrictEqual(addedComment.owner);
-    expect(comment.date).toStrictEqual(addedComment.date);
+    expect(comment).toStrictEqual(new AddedComment({
+      id: 'comment-123',
+      content: useCasePayload.content,
+      owner: useCasePayload.owner,
+    }));
   });
 
   it('should throw error if payload not contain needed property', async () => {
@@ -79,7 +72,7 @@ describe('AddCommentUseCase', () => {
   it('should throw error if payload not meet data type specification', async () => {
     // Arrange
     const useCasePayload = {
-      comment: 123,
+      content: 123,
       owner: 'user-123',
       threadId: 'thread-123',
     };
@@ -94,11 +87,13 @@ describe('AddCommentUseCase', () => {
   it('should throw error if thread not found', async () => {
     // mock
     const mockThreadRepository = new ThreadRepository();
-    mockThreadRepository.verifyThreadAvailability = jest.fn(() => false);
+    mockThreadRepository.verifyThreadAvailability = jest.fn(() => {
+      throw new Error('ADD_COMMENT_USE_CASE.THREAD_NOT_FOUND');
+    });
 
     // Arrange
     const useCasePayload = {
-      comment: 'dicoding',
+      content: 'dicoding',
       owner: 'user-123',
       threadId: 'thread-123',
     };
