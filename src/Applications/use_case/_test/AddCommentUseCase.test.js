@@ -8,7 +8,7 @@ describe('AddCommentUseCase', () => {
   it('should orchestrating the add comment action correctly', async () => {
     // Arrange
     const useCasePayload = {
-      comment: 'dicoding',
+      content: 'dicoding',
       owner: 'user-123',
       threadId: 'thread-123',
     };
@@ -20,7 +20,7 @@ describe('AddCommentUseCase', () => {
     const date = '2021-08-08T07:22:13.017Z';
     const addedComment = {
       id: 'comment-123',
-      content: useCasePayload.comment,
+      content: useCasePayload.content,
       owner: useCasePayload.owner,
       date,
     };
@@ -50,7 +50,7 @@ describe('AddCommentUseCase', () => {
       .toHaveBeenCalledWith(useCasePayload.threadId);
     expect(mockCommentRepository.addComment)
       .toHaveBeenCalledWith(new AddComment({
-        comment: useCasePayload.comment,
+        content: useCasePayload.content,
         owner: useCasePayload.owner,
         threadId: useCasePayload.threadId,
         date,
@@ -58,7 +58,7 @@ describe('AddCommentUseCase', () => {
 
     expect(comment.id).toStrictEqual(addedComment.id);
     expect(comment.owner).toStrictEqual(addedComment.owner);
-    expect(comment.content).toStrictEqual(addedComment.comment);
+    expect(comment.content).toStrictEqual(addedComment.content);
     expect(comment.owner).toStrictEqual(addedComment.owner);
     expect(comment.date).toStrictEqual(addedComment.date);
   });
@@ -79,7 +79,7 @@ describe('AddCommentUseCase', () => {
   it('should throw error if payload not meet data type specification', async () => {
     // Arrange
     const useCasePayload = {
-      comment: 123,
+      content: 123,
       owner: 'user-123',
       threadId: 'thread-123',
     };
@@ -98,7 +98,7 @@ describe('AddCommentUseCase', () => {
 
     // Arrange
     const useCasePayload = {
-      comment: 'dicoding',
+      content: 'dicoding',
       owner: 'user-123',
       threadId: 'thread-123',
     };

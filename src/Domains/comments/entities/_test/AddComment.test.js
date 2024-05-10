@@ -4,7 +4,7 @@ describe('AddComment entities', () => {
   it('should throw error when payload did not contain needed property', () => {
     // Arrange
     const payload = {
-      comment: 'dicoding thread comment',
+      content: 'dicoding thread comment',
     };
 
     // Action and Assert
@@ -15,7 +15,7 @@ describe('AddComment entities', () => {
     // Arrange
     const payload = {
       threadId: 'thread-123',
-      comment: 123,
+      content: 123,
       owner: true,
       date: '2021-08-08T07:59:00.000Z',
     };
@@ -27,19 +27,19 @@ describe('AddComment entities', () => {
   it('should create comment object correctly', () => {
     const payload = {
       threadId: 'thread-123',
-      comment: 'dicoding thread comment',
+      content: 'dicoding thread comment',
       owner: 'userId-7187212',
       date: '2021-08-08T07:59:00.000Z',
     };
 
     // Action
     const {
-      threadId, comment, owner, date,
+      threadId, content, owner, date,
     } = new AddComment(payload);
 
     // Assert
     expect(threadId).toEqual(payload.threadId);
-    expect(comment).toEqual(payload.comment);
+    expect(content).toEqual(payload.content);
     expect(owner).toEqual(payload.owner);
     expect(date).toEqual(payload.date);
   });

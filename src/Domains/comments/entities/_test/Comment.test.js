@@ -6,7 +6,7 @@ describe('a Comment entities', () => {
     const payload = {
       id: 'comment-123',
       threadId: 'thread-123',
-      comment: 'comment content',
+      content: 'comment content',
       owner: 'user-123',
       date: new Date().toISOString(),
       username: 'dicoding',
@@ -14,12 +14,12 @@ describe('a Comment entities', () => {
     };
     // Action
     const {
-      id, threadId, comment, owner, date, deletedDate, username,
+      id, threadId, content, owner, date, deletedDate, username,
     } = new Comment(payload);
     // Assert
     expect(id).toEqual(payload.id);
     expect(threadId).toEqual(payload.threadId);
-    expect(comment).toEqual(payload.comment);
+    expect(content).toEqual(payload.content);
     expect(owner).toEqual(payload.owner);
     expect(date).toEqual(payload.date);
     expect(deletedDate).toEqual(payload.deletedDate);

@@ -8,12 +8,12 @@ class AddCommentUseCase {
 
   async execute(useCasePayload) {
     const {
-      comment, owner, threadId,
+      content, owner, threadId,
     } = useCasePayload;
 
     const date = new Date().toISOString();
     const addComment = new AddComment({
-      comment, owner, threadId, date,
+      content, owner, threadId, date,
     });
 
     const isExist = await this._threadRepository.verifyThreadAvailability(threadId);
@@ -24,7 +24,7 @@ class AddCommentUseCase {
     const addedComment = await this._commentRepository.addComment(addComment);
     return {
       id: addedComment.id,
-      content: addedComment.comment,
+      content: addedComment.content,
       owner: addedComment.owner,
       date: addedComment.date,
     };

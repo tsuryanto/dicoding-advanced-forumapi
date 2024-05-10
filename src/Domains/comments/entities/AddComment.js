@@ -1,19 +1,19 @@
 class AddComment {
   constructor(payload) {
     const {
-      threadId, comment, owner, date,
+      threadId, content, owner, date,
     } = payload;
 
-    if (!threadId || !comment || !owner || !date) {
+    if (!threadId || !content || !owner || !date) {
       throw new Error('ADD_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
-    if (typeof threadId !== 'string' || typeof comment !== 'string' || typeof owner !== 'string' || typeof date !== 'string') {
+    if (typeof threadId !== 'string' || typeof content !== 'string' || typeof owner !== 'string' || typeof date !== 'string') {
       throw new Error('ADD_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
 
     this.threadId = threadId;
-    this.comment = comment;
+    this.content = content;
     this.owner = owner;
     this.date = date;
   }

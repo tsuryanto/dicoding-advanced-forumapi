@@ -42,7 +42,7 @@ describe('CommentRepositoryPostgres', () => {
       // Action
       const payload = new AddComment({
         threadId: 'thread-123',
-        comment: 'comment dicoding',
+        content: 'comment dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
       });
@@ -52,7 +52,7 @@ describe('CommentRepositoryPostgres', () => {
         id: 'threadComment-123',
         threadId: payload.threadId,
         owner: payload.owner,
-        comment: payload.comment,
+        content: payload.content,
         date: payload.date,
       }));
 
@@ -79,7 +79,7 @@ describe('CommentRepositoryPostgres', () => {
 
       const payload = new AddComment({
         threadId: 'thread-123',
-        comment: 'comment dicoding',
+        content: 'comment dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
       });
@@ -91,7 +91,7 @@ describe('CommentRepositoryPostgres', () => {
         id: 'threadComment-123',
         threadId: payload.threadId,
         owner: payload.owner,
-        comment: payload.comment,
+        content: payload.content,
         date: payload.date,
         deletedDate: null,
       }));
@@ -127,7 +127,7 @@ describe('CommentRepositoryPostgres', () => {
 
       await commentRepository.addComment(new AddComment({
         threadId: 'thread-123',
-        comment: 'comment dicoding',
+        content: 'comment dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
       }));
@@ -165,7 +165,7 @@ describe('CommentRepositoryPostgres', () => {
 
       await commentRepository.addComment(new AddComment({
         threadId: 'thread-123',
-        comment: 'comment dicoding',
+        content: 'comment dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
       }));
@@ -192,7 +192,7 @@ describe('CommentRepositoryPostgres', () => {
 
       await commentRepository.addComment(new AddComment({
         threadId: 'thread-123',
-        comment: 'comment dicoding',
+        content: 'comment dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
       }));
@@ -221,7 +221,7 @@ describe('CommentRepositoryPostgres', () => {
 
       await commentRepository.addComment(new AddComment({
         threadId: 'thread-123',
-        comment: 'comment dicoding',
+        content: 'comment dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
       }));
@@ -263,7 +263,7 @@ describe('CommentRepositoryPostgres', () => {
 
       const payload = new AddComment({
         threadId: 'thread-123',
-        comment: 'comment dicoding',
+        content: 'comment dicoding',
         owner: 'user-threadtest-123',
         date: '2024-08-08T07:22:58.000Z',
       });
@@ -276,7 +276,7 @@ describe('CommentRepositoryPostgres', () => {
         id: 'threadComment-123',
         threadId: payload.threadId,
         owner: payload.owner,
-        comment: payload.comment,
+        content: payload.content,
         date: payload.date,
         deletedDate: null,
         username: 'dicoding',

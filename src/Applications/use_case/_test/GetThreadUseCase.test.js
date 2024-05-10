@@ -47,7 +47,7 @@ describe('GetThreadUseCase', () => {
       new Comment({
         id: 'comment-456',
         threadId: 'thread-123',
-        comment: 'ini comment',
+        content: 'ini comment',
         owner: 'user-124',
         date: '2024-04-20T19:23:55.913Z',
         deletedDate: '2024-04-21T19:23:55.913Z',
@@ -56,7 +56,7 @@ describe('GetThreadUseCase', () => {
       new Comment({
         id: 'comment-123',
         threadId: 'thread-123',
-        comment: 'ini comment',
+        content: 'ini comment',
         owner: 'user-123',
         date: '2024-04-24T19:23:55.913Z',
         deletedDate: null,
