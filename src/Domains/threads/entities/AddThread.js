@@ -4,8 +4,8 @@ class AddThread {
       title, body, owner, date,
     } = payload;
 
-    if (!title || !body || !owner || !date) {
-      throw new Error('ADD_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
+    if (!title || !body || !date) {
+      throw new Error('ADD_THREAD.NOT_CONTAIN_NEEDED_PROPERTY_A');
     }
 
     if (typeof title !== 'string' || typeof body !== 'string' || typeof owner !== 'string' || typeof date !== 'string') {
