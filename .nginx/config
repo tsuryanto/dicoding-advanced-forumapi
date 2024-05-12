@@ -59,6 +59,7 @@ server {
 
 	location /threads {
 		limit_req zone=one burst=5 nodelay;
+		proxy_pass http://localhost:5000/threads;
 	}
 	# pass PHP scripts to FastCGI server
 	#
